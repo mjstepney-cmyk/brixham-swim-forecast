@@ -703,6 +703,17 @@ h2 {
   text-underline-offset: 3px;
 }
 
+.text-button {
+  border: 0;
+  border-bottom: 2px solid currentColor;
+  padding: 0;
+  background: transparent;
+  color: var(--teal);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+}
+
 .inline-link {
   margin-left: 8px;
   white-space: nowrap;

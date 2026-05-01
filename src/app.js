@@ -1,4 +1,4 @@
-import { marineUrl, qualityUrl, weatherUrl } from "./config.js";
+import { CACHE_TTL_MS, marineUrl, qualityUrl, weatherUrl } from "./config.js";
 import { fetchJsonWithCache, parseQualityStatus } from "./data.js";
 import { readStoredPreferences } from "./preferences.js";
 import { applyQualityStatus, combineHours } from "./scoring.js";
@@ -13,13 +13,17 @@ import {
   setForecastHours,
 } from "./render.js";
 
-async function boot() {
+let refreshInFlight = null;
+let lastRefreshStartedAt = 0;
+
+async function boot(options = {}) {
   try {
+    lastRefreshStartedAt = Date.now();
     const preferences = readStoredPreferences();
     const [weatherResult, marineResult, qualityResult] = await Promise.allSettled([
-      fetchJsonWithCache(weatherUrl, "weather"),
-      fetchJsonWithCache(marineUrl, "marine"),
-      fetchJsonWithCache(qualityUrl, "quality"),
+      fetchJsonWithCache(weatherUrl, "weather", options),
+      fetchJsonWithCache(marineUrl, "marine", options),
+      fetchJsonWithCache(qualityUrl, "quality", options),
     ]);
 
     if (weatherResult.status === "rejected") {
@@ -61,4 +65,28 @@ async function boot() {
   }
 }
 
-boot();
+function refreshForecast(options = {}) {
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = boot(options).finally(() => {
+    refreshInFlight = null;
+  });
+  return refreshInFlight;
+}
+
+refreshForecast();
+
+setInterval(() => {
+  refreshForecast({ forceRefresh: true });
+}, CACHE_TTL_MS);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && Date.now() - lastRefreshStartedAt >= CACHE_TTL_MS) {
+    refreshForecast({ forceRefresh: true });
+  }
+});
+
+window.addEventListener("focus", () => {
+  if (Date.now() - lastRefreshStartedAt >= CACHE_TTL_MS) {
+    refreshForecast({ forceRefresh: true });
+  }
+});

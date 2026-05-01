@@ -18,12 +18,12 @@ function writeCache(key, data) {
   }
 }
 
-export async function fetchJsonWithCache(url, key) {
-  const fresh = readCache(key);
+export async function fetchJsonWithCache(url, key, options = {}) {
+  const fresh = options.forceRefresh ? null : readCache(key);
   if (fresh) return { data: fresh.data, cachedAt: fresh.savedAt };
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: options.forceRefresh ? "no-store" : "default" });
     if (!response.ok) throw new Error(`${key} service did not respond cleanly`);
     const data = await response.json();
     writeCache(key, data);

@@ -2,6 +2,7 @@ import { cardinal, clamp, fmt, nearestIndex, $ } from "./utils.js";
 import { daylightWindows, groupByDay, scoreAdvice, scoreClass, scoreLabel } from "./scoring.js";
 
 let forecastHours = [];
+let currentSnapshot = null;
 
 export function setForecastHours(hours) {
   forecastHours = hours;
@@ -141,11 +142,16 @@ function selectForecastHour(time) {
     <p class="status-label">${scoreLabel(selected.score)}</p>
     <h2>${date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}, ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}. ${scoreAdvice(selected.score, selected)}.</h2>
     <p class="muted">Forecast selection shown in the beach panel and current-condition readouts below.</p>
+    <button id="returnCurrentButton" class="text-button" type="button">Return to current</button>
   `;
   renderBeachVisual(weatherFromHour(selected), marineFromHour(selected), forecastHours, selected);
+  $("returnCurrentButton").addEventListener("click", () => {
+    if (currentSnapshot) renderCurrent(currentSnapshot.weather, currentSnapshot.marine, currentSnapshot.hours, currentSnapshot.meta);
+  });
 }
 
 export function renderCurrent(weather, marine, hours, meta = {}) {
+  currentSnapshot = { weather, marine, hours, meta };
   const nowWeather = weather.current;
   const nowMarine = marine.current;
   const current = hours[nearestIndex(hours.map((hour) => hour.time))];
@@ -165,6 +171,9 @@ export function renderCurrent(weather, marine, hours, meta = {}) {
     minute: "2-digit",
   })}`;
   renderBeachVisual(nowWeather, nowMarine, hours, current);
+  document.querySelectorAll("[data-forecast-time]").forEach((card) => {
+    card.classList.remove("selected");
+  });
 }
 
 export function renderWeatherOnly(weather, meta = {}) {
