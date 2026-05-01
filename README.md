@@ -41,6 +41,12 @@ node --check src/app.js
 node tests/scoring.test.js
 ```
 
+## iPhone setup
+
+Use GitHub Pages, then add the published site to the iPhone Home Screen from Safari.
+
+See [MOBILE_SETUP.md](MOBILE_SETUP.md).
+
 ## Forecast horizon
 
 Two weeks is a reasonable maximum for a planning view, but the first working version uses 8 days because the standard Open-Meteo marine endpoint documents an 8-day `forecast_days` limit even though some underlying wave models run longer. The production app should treat longer forecasts as three confidence bands:
