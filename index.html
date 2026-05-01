@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b5264" />
+    <title>Brixham Swim Forecast</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Breakwater Beach, Brixham</p>
+          <h1>Swim conditions</h1>
+          <p id="lastUpdated" class="muted">Loading latest forecast...</p>
+        </div>
+      </section>
+
+      <section class="beach-visual" aria-label="Pictorial beach conditions">
+        <div class="visual-title">
+          <h2>Current conditions</h2>
+          <p>
+            Breakwater Beach now
+            <a class="text-link inline-link" href="https://camsecure.co.uk/brixham_breakwater.html" target="_blank" rel="noopener">View webcam</a>
+          </p>
+        </div>
+        <div id="beachScene" class="beach-scene">
+          <img
+            src="https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=-3.5059,50.3988,-3.5022,50.4025&amp;bboxSR=4326&amp;imageSR=4326&amp;size=720,1080&amp;format=jpg&amp;f=image"
+            alt="Satellite view around Breakwater Beach, Brixham"
+          />
+          <div class="map-shade"></div>
+          <div id="scoreBadge" class="score-badge scene-score" aria-live="polite">
+            <span>--</span>
+            <small>score</small>
+          </div>
+
+          <div class="conditions-overlay">
+            <div class="temp-stack">
+              <div class="readout-item">
+                <small>Air temp</small>
+                <strong id="visualAirTemp">--</strong>
+              </div>
+              <div class="readout-item">
+                <small>Sea temp</small>
+                <strong id="visualTemp">--</strong>
+              </div>
+            </div>
+
+            <div class="wind-annotation" aria-label="Wind direction and speed">
+              <div id="windArrow" class="wind-arrow">
+                <span></span>
+              </div>
+              <small>Wind</small>
+              <strong id="visualWind">--</strong>
+            </div>
+
+            <div class="sea-stack">
+              <div id="waveStatus" class="wave-status">
+                <small>Wave height</small>
+                <strong id="visualWave">--</strong>
+              </div>
+              <div class="tide-readout">
+                <div class="tide-track" aria-hidden="true">
+                  <span id="tideFill"></span>
+                </div>
+                <div>
+                  <small>Tide state</small>
+                  <strong><span id="visualTideArrow" class="tide-arrow">-</span> <span id="visualTide">--</span></strong>
+                  <a class="visual-link" href="https://easytide.admiralty.co.uk/?PortID=0510" target="_blank" rel="noopener">Official tide</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="weather-overlay">
+            <div class="weather-symbol weather-mix" id="visualWeatherIcon" aria-hidden="true">
+              <span></span>
+            </div>
+            <div class="weather-readout">
+              <small>Weather</small>
+              <strong id="visualWeather">--</strong>
+            </div>
+            <div class="weather-readout">
+              <small>Rain risk</small>
+              <strong id="visualRain">--</strong>
+            </div>
+            <div class="weather-readout">
+              <small>Feels like</small>
+              <strong id="visualFeels">--</strong>
+            </div>
+          </div>
+          <p class="imagery-credit">Imagery: Esri World Imagery</p>
+        </div>
+      </section>
+
+      <section id="summaryCard" class="summary-card" aria-live="polite">
+        <p class="status-label">Checking the water...</p>
+        <h2>Building today's swim read.</h2>
+        <p class="muted">Weather, sea state and modelled tide are being combined for this beach.</p>
+      </section>
+
+      <section id="waterQualityCard" class="notice quality-card" aria-live="polite">
+        <h2>Water quality</h2>
+        <p>Checking Environment Agency bathing water status.</p>
+      </section>
+
+      <section class="section-head">
+        <h2>Next good windows</h2>
+        <p>Best-looking daylight slots from the forecast.</p>
+      </section>
+      <div id="windowsList" class="windows-list"></div>
+
+      <section class="section-head">
+        <h2>Eight day outlook</h2>
+        <p>Confidence drops after the first few days, especially for wind and waves.</p>
+      </section>
+      <div id="dailyList" class="daily-list"></div>
+
+      <section class="notice">
+        <h2>Data notes</h2>
+        <p>
+          This prototype uses Open-Meteo weather and marine forecasts. Tide is shown as modelled sea
+          level, not an official tide table. Use ADMIRALTY EasyTide to verify Brixham tide times.
+          A production version should use the UKHO Admiralty Tidal API, Environment Agency bathing
+          water warnings and South West Water overflow status.
+        </p>
+        <p>
+          <a class="text-link" href="https://easytide.admiralty.co.uk/?PortID=0510" target="_blank" rel="noopener">Open ADMIRALTY EasyTide for Brixham</a>
+        </p>
+      </section>
+
+      <section class="score-explainer">
+        <h2>How the 100 score is calculated</h2>
+        <p>
+          Each hour starts at 100. Points are removed for choppier waves, swell, stronger wind,
+          gusts, rain risk, cold sea temperature, showers and lower tide. Higher tide is preferred,
+          so low-water slots can lose up to 10 points.
+        </p>
+        <div class="score-rules">
+          <span>Wave above 0.35 m: stronger penalty</span>
+          <span>Swell above 0.25 m: moderate penalty</span>
+          <span>Wind above 13 km/h and gusts above 22 km/h: gradual penalty</span>
+          <span>Rain risk above 35%: gradual penalty</span>
+          <span>Sea below 10 deg C: cold-water penalty</span>
+          <span>Lower tide: up to 10 points off</span>
+          <span>Showery weather: 8 points off</span>
+        </div>
+      </section>
+
+      <section class="notice">
+        <h2>Swimmer questionnaire</h2>
+        <p>
+          Use the fillable questionnaire to collect swimmer preferences, then download the JSON
+          answer file and pass it back into this project.
+        </p>
+        <p>
+          <a class="text-link" href="questionnaire.html">Open fillable questionnaire</a>
+        </p>
+      </section>
+    </main>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

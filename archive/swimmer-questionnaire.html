@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brixham Swim Forecast - Swimmer Questionnaire</title>
+    <style>
+      :root {
+        --ink: #10242a;
+        --muted: #5b6f73;
+        --line: #d8e1dc;
+        --paper: #f7f8f4;
+        --teal: #0b5264;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      main {
+        width: min(100%, 920px);
+        margin: 0 auto;
+        padding: 32px 18px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 2.4rem;
+        line-height: 1;
+      }
+
+      h2 {
+        margin: 28px 0 10px;
+        font-size: 1.25rem;
+      }
+
+      p {
+        color: var(--muted);
+      }
+
+      .panel {
+        margin-top: 14px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.95rem;
+      }
+
+      th,
+      td {
+        padding: 9px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--teal);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+      }
+
+      .answer {
+        width: 130px;
+      }
+
+      .notes {
+        width: 34%;
+      }
+
+      .line {
+        display: block;
+        min-height: 34px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .checks {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 8px;
+      }
+
+      .checks span {
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+        }
+
+        main {
+          padding: 0;
+        }
+
+        .panel {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Swimmer Preference Questionnaire</h1>
+      <p>For shaping the Brixham Swim Forecast scoring model. Preference scores use 1 = not important and 5 = decisive.</p>
+
+      <section class="panel">
+        <h2>Swimmer Details</h2>
+        <p>Name or initials</p>
+        <span class="line"></span>
+        <p>Usual swimming pattern</p>
+        <div class="checks">
+          <span>Solo</span>
+          <span>With one other person</span>
+          <span>Small group</span>
+          <span>Organised group</span>
+        </div>
+        <p>Cold-water experience</p>
+        <div class="checks">
+          <span>Beginner</span>
+          <span>Regular</span>
+          <span>Experienced</span>
+          <span>Winter swimmer</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Hard Safety Rules</h2>
+        <table>
+          <thead>
+            <tr><th>Question</th><th class="answer">Answer</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Official pollution warning at Breakwater Beach means automatic no swim?</td><td></td></tr>
+            <tr><td>Thunder or lightning nearby means automatic no swim?</td><td></td></tr>
+            <tr><td>Poor visibility, fog, or darkness should be no swim, caution, or depends?</td><td></td></tr>
+            <tr><td>Storm overflow activity at this beach should be no swim, caution, or depends?</td><td></td></tr>
+            <tr><td>Swimming alone should make the app more conservative?</td><td></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>Preference Weights</h2>
+        <table>
+          <thead>
+            <tr><th>Factor</th><th class="answer">1-5</th><th class="notes">Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Higher tide</td><td></td><td></td></tr>
+            <tr><td>Tide rising rather than falling</td><td></td><td></td></tr>
+            <tr><td>Low wave height</td><td></td><td></td></tr>
+            <tr><td>Low chop / settled surface</td><td></td><td></td></tr>
+            <tr><td>Low wind speed</td><td></td><td></td></tr>
+            <tr><td>Low gust strength</td><td></td><td></td></tr>
+            <tr><td>Sheltered wind direction</td><td></td><td></td></tr>
+            <tr><td>Warmer sea temperature</td><td></td><td></td></tr>
+            <tr><td>Warmer air temperature after the swim</td><td></td><td></td></tr>
+            <tr><td>Low rain risk</td><td></td><td></td></tr>
+            <tr><td>Bright daylight / good visibility</td><td></td><td></td></tr>
+            <tr><td>Easy entry and exit</td><td></td><td></td></tr>
+            <tr><td>Other swimmers nearby</td><td></td><td></td></tr>
+            <tr><td>Forecast confidence / near-term reliability</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>Thresholds</h2>
+        <table>
+          <thead>
+            <tr><th>Question</th><th>Answer</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>At what wave height does the swim stop being enjoyable?</td><td></td></tr>
+            <tr><td>At what wave height would you avoid swimming?</td><td></td></tr>
+            <tr><td>At what wind speed does it stop being enjoyable?</td><td></td></tr>
+            <tr><td>At what gust speed would you avoid swimming?</td><td></td></tr>
+            <tr><td>What sea temperature changes your decision?</td><td></td></tr>
+            <tr><td>How much does rain affect your decision?</td><td></td></tr>
+            <tr><td>Preferred tide state</td><td></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>Local Knowledge</h2>
+        <p>Which wind directions usually make Breakwater Beach unpleasant or choppy?</p>
+        <span class="line"></span>
+        <p>Which wind directions usually feel sheltered?</p>
+        <span class="line"></span>
+        <p>Are there tide states where entry, exit, or currents become awkward?</p>
+        <span class="line"></span>
+        <p>After heavy rain, how long would you normally wait before swimming?</p>
+        <span class="line"></span>
+        <p>What does your ideal swim window look like?</p>
+        <span class="line"></span>
+      </section>
+
+      <section class="panel">
+        <h2>Top Five Factors</h2>
+        <ol>
+          <li><span class="line"></span></li>
+          <li><span class="line"></span></li>
+          <li><span class="line"></span></li>
+          <li><span class="line"></span></li>
+          <li><span class="line"></span></li>
+        </ol>
+      </section>
+    </main>
+  </body>
+</html>

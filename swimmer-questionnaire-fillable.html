@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brixham Swim Forecast - Fillable Questionnaire</title>
+    <style>
+      :root {
+        --ink: #10242a;
+        --muted: #5b6f73;
+        --line: #d8e1dc;
+        --paper: #f7f8f4;
+        --panel: #ffffff;
+        --teal: #0b5264;
+        --green: #217a50;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      main {
+        width: min(100%, 900px);
+        margin: 0 auto;
+        padding: 28px 16px 42px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 2.1rem;
+        line-height: 1;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 1.18rem;
+      }
+
+      p {
+        color: var(--muted);
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.94rem;
+        font-weight: 700;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 9px 10px;
+        background: #ffffff;
+        color: var(--ink);
+        font: inherit;
+      }
+
+      textarea {
+        min-height: 86px;
+        resize: vertical;
+      }
+
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 11px 14px;
+        background: var(--teal);
+        color: #ffffff;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        border: 1px solid var(--line);
+        background: #ffffff;
+        color: var(--teal);
+      }
+
+      .intro,
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 12px 30px rgba(16, 36, 42, 0.05);
+      }
+
+      .intro {
+        padding: 18px;
+        margin-bottom: 14px;
+      }
+
+      .panel {
+        margin-top: 12px;
+        padding: 16px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .factor-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 96px;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .factor-row:last-child {
+        border-bottom: 0;
+      }
+
+      .factor-row span {
+        font-weight: 700;
+      }
+
+      .actions {
+        position: sticky;
+        bottom: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(247, 248, 244, 0.94);
+        backdrop-filter: blur(8px);
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        color: var(--green);
+        font-weight: 800;
+      }
+
+      .scale {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .scale span {
+        padding: 7px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      @media (max-width: 680px) {
+        .grid,
+        .factor-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="intro">
+        <h1>Swimmer Preference Questionnaire</h1>
+        <p>
+          Fill this in once, then download the JSON answer file. You can upload or paste that JSON
+          back into Codex later and it can be used directly as the scoring source.
+        </p>
+        <div class="scale" aria-label="Preference scale">
+          <span>1 not important</span>
+          <span>2 slight</span>
+          <span>3 matters</span>
+          <span>4 very important</span>
+          <span>5 decisive</span>
+        </div>
+      </section>
+
+      <form id="questionnaire">
+        <section class="panel">
+          <h2>Swimmer Details</h2>
+          <div class="grid">
+            <label>
+              Name or initials
+              <input name="respondent" autocomplete="name" />
+            </label>
+            <label>
+              Usual swimming pattern
+              <select name="swim_pattern">
+                <option value="">Choose...</option>
+                <option>Mostly solo</option>
+                <option>With one other person</option>
+                <option>Small group</option>
+                <option>Organised group</option>
+              </select>
+            </label>
+            <label>
+              Cold-water experience
+              <select name="cold_water_experience">
+                <option value="">Choose...</option>
+                <option>Beginner</option>
+                <option>Regular open-water swimmer</option>
+                <option>Experienced</option>
+                <option>Winter swimmer</option>
+              </select>
+            </label>
+            <label>
+              Typical kit
+              <input name="kit" placeholder="e.g. tow float, gloves, wetsuit" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Hard Safety Rules</h2>
+          <div class="grid">
+            <label>
+              Official pollution warning at Breakwater Beach
+              <select name="pollution_warning_rule">
+                <option value="automatic_no_swim">Automatic no swim</option>
+                <option value="caution">Caution</option>
+                <option value="depends">Depends</option>
+              </select>
+            </label>
+            <label>
+              Thunder or lightning nearby
+              <select name="thunder_rule">
+                <option value="automatic_no_swim">Automatic no swim</option>
+                <option value="caution">Caution</option>
+                <option value="depends">Depends</option>
+              </select>
+            </label>
+            <label>
+              Poor visibility, fog, or darkness
+              <select name="poor_visibility_rule">
+                <option value="caution">Caution</option>
+                <option value="automatic_no_swim">Automatic no swim</option>
+                <option value="depends">Depends</option>
+              </select>
+            </label>
+            <label>
+              Storm overflow activity at this beach
+              <select name="overflow_rule">
+                <option value="automatic_no_swim">Automatic no swim</option>
+                <option value="caution">Caution</option>
+                <option value="depends">Depends</option>
+              </select>
+            </label>
+            <label>
+              If swimming alone, should the model be more conservative?
+              <select name="solo_more_conservative">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Preference Weights</h2>
+          <div id="factorList"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Thresholds</h2>
+          <div class="grid">
+            <label>
+              Wave height where swim stops being enjoyable
+              <select name="wave_unenjoyable">
+                <option>0.3 m</option>
+                <option>0.5 m</option>
+                <option>0.8 m</option>
+                <option>1.0 m+</option>
+                <option>Unsure</option>
+              </select>
+            </label>
+            <label>
+              Wave height where you would avoid swimming
+              <select name="wave_avoid">
+                <option>0.5 m</option>
+                <option>0.8 m</option>
+                <option>1.0 m</option>
+                <option>1.5 m+</option>
+                <option>Depends</option>
+              </select>
+            </label>
+            <label>
+              Wind speed where swim stops being enjoyable
+              <select name="wind_unenjoyable">
+                <option>10 km/h</option>
+                <option>20 km/h</option>
+                <option>30 km/h</option>
+                <option>40 km/h+</option>
+                <option>Depends</option>
+              </select>
+            </label>
+            <label>
+              Gust speed where you would avoid swimming
+              <select name="gust_avoid">
+                <option>20 km/h</option>
+                <option>30 km/h</option>
+                <option>40 km/h</option>
+                <option>50 km/h+</option>
+                <option>Depends</option>
+              </select>
+            </label>
+            <label>
+              Sea temperature that changes your decision
+              <select name="sea_temp_threshold">
+                <option>Below 8 C</option>
+                <option>Below 10 C</option>
+                <option>Below 12 C</option>
+                <option>Below 15 C</option>
+                <option>Rarely</option>
+              </select>
+            </label>
+            <label>
+              How much rain affects your decision
+              <select name="rain_effect">
+                <option>Not much</option>
+                <option>Heavy rain only</option>
+                <option>Avoid rain</option>
+                <option>Mainly water quality</option>
+              </select>
+            </label>
+            <label>
+              Preferred tide state
+              <select name="preferred_tide">
+                <option>High tide</option>
+                <option>Mid tide rising</option>
+                <option>Low tide</option>
+                <option>Any safe tide</option>
+                <option>Beach dependent</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Other Beaches and Water Quality</h2>
+          <div class="grid">
+            <label>
+              After overflow or heavy rain at another beach
+              <select name="other_beach_overflow_caution">
+                <option>No swim</option>
+                <option>24h wait</option>
+                <option>48h wait</option>
+                <option>Depends on tide/wind</option>
+                <option>Warning only</option>
+              </select>
+            </label>
+            <label>
+              If tide/wind carry pollution away from the swim area
+              <select name="allow_good_score_if_pollution_carried_away">
+                <option>No</option>
+                <option>Heavy caution</option>
+                <option>Caution only</option>
+                <option>Yes if official data is clear</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Local Knowledge</h2>
+          <div class="grid">
+            <label>
+              Wind directions that make Breakwater Beach unpleasant or choppy
+              <textarea name="bad_wind_directions"></textarea>
+            </label>
+            <label>
+              Wind directions that usually feel sheltered
+              <textarea name="sheltered_wind_directions"></textarea>
+            </label>
+            <label>
+              Tide states where entry, exit, or currents become awkward
+              <textarea name="awkward_tide_states"></textarea>
+            </label>
+            <label>
+              How long you normally wait after heavy rain
+              <textarea name="rain_wait_time"></textarea>
+            </label>
+            <label>
+              Conditions where forecast looks fine but beach feels poor
+              <textarea name="forecast_blind_spots"></textarea>
+            </label>
+            <label>
+              Ideal swim window
+              <textarea name="ideal_swim_window"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Top Five Factors</h2>
+          <div class="grid">
+            <label>1 <input name="top_factor_1" /></label>
+            <label>2 <input name="top_factor_2" /></label>
+            <label>3 <input name="top_factor_3" /></label>
+            <label>4 <input name="top_factor_4" /></label>
+            <label>5 <input name="top_factor_5" /></label>
+          </div>
+        </section>
+
+        <section class="actions">
+          <button type="button" id="saveLocal">Save to this device</button>
+          <button type="button" id="downloadJson">Download answer JSON</button>
+          <button type="button" class="secondary" id="copyJson">Copy JSON</button>
+          <button type="reset" class="secondary">Clear form</button>
+          <span class="status" id="status" aria-live="polite"></span>
+        </section>
+      </form>
+    </main>
+
+    <script>
+      const factors = [
+        ["higher_tide", "Higher tide"],
+        ["tide_rising", "Tide rising rather than falling"],
+        ["low_wave_height", "Low wave height"],
+        ["low_chop", "Low chop / settled surface"],
+        ["low_wind_speed", "Low wind speed"],
+        ["low_gusts", "Low gust strength"],
+        ["sheltered_wind", "Sheltered wind direction"],
+        ["warm_sea_temp", "Warmer sea temperature"],
+        ["warm_air_temp", "Warmer air temperature after the swim"],
+        ["low_rain_risk", "Low rain risk"],
+        ["daylight_visibility", "Bright daylight / good visibility"],
+        ["easy_entry_exit", "Easy entry and exit"],
+        ["other_swimmers_nearby", "Other swimmers nearby"],
+        ["forecast_confidence", "Forecast confidence / near-term reliability"],
+      ];
+
+      const factorList = document.getElementById("factorList");
+      factorList.innerHTML = factors
+        .map(
+          ([name, label]) => `
+            <label class="factor-row">
+              <span>${label}</span>
+              <select name="${name}">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </label>
+          `
+        )
+        .join("");
+
+      function modelMultiplier(score) {
+        return {
+          1: 0.25,
+          2: 0.5,
+          3: 1,
+          4: 1.5,
+          5: 2,
+        }[score] || 1;
+      }
+
+      function collectAnswers() {
+        const form = document.getElementById("questionnaire");
+        const data = new FormData(form);
+        const answers = {};
+        for (const [key, value] of data.entries()) {
+          answers[key] = value;
+        }
+
+        const preference_weights = {};
+        factors.forEach(([key]) => {
+          const score = Number(answers[key] || 3);
+          preference_weights[key] = {
+            score,
+            multiplier: modelMultiplier(score),
+          };
+        });
+
+        return {
+          schema: "brixham_swim_preference_v1",
+          created_at: new Date().toISOString(),
+          respondent: answers.respondent || "anonymous",
+          hard_rules: {
+            pollution_warning_rule: answers.pollution_warning_rule,
+            thunder_rule: answers.thunder_rule,
+            poor_visibility_rule: answers.poor_visibility_rule,
+            overflow_rule: answers.overflow_rule,
+            solo_more_conservative: answers.solo_more_conservative,
+          },
+          swimmer_profile: {
+            swim_pattern: answers.swim_pattern,
+            cold_water_experience: answers.cold_water_experience,
+            kit: answers.kit,
+          },
+          preference_weights,
+          thresholds: {
+            wave_unenjoyable: answers.wave_unenjoyable,
+            wave_avoid: answers.wave_avoid,
+            wind_unenjoyable: answers.wind_unenjoyable,
+            gust_avoid: answers.gust_avoid,
+            sea_temp_threshold: answers.sea_temp_threshold,
+            rain_effect: answers.rain_effect,
+            preferred_tide: answers.preferred_tide,
+          },
+          other_beaches: {
+            other_beach_overflow_caution: answers.other_beach_overflow_caution,
+            allow_good_score_if_pollution_carried_away: answers.allow_good_score_if_pollution_carried_away,
+          },
+          local_knowledge: {
+            bad_wind_directions: answers.bad_wind_directions,
+            sheltered_wind_directions: answers.sheltered_wind_directions,
+            awkward_tide_states: answers.awkward_tide_states,
+            rain_wait_time: answers.rain_wait_time,
+            forecast_blind_spots: answers.forecast_blind_spots,
+            ideal_swim_window: answers.ideal_swim_window,
+          },
+          top_factors: [
+            answers.top_factor_1,
+            answers.top_factor_2,
+            answers.top_factor_3,
+            answers.top_factor_4,
+            answers.top_factor_5,
+          ].filter(Boolean),
+          raw_answers: answers,
+        };
+      }
+
+      function filenameFor(answers) {
+        const safeName = String(answers.respondent || "swimmer")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+        return `swim-preferences-${safeName || "swimmer"}.json`;
+      }
+
+      function showStatus(text) {
+        document.getElementById("status").textContent = text;
+      }
+
+      document.getElementById("downloadJson").addEventListener("click", () => {
+        const answers = collectAnswers();
+        const blob = new Blob([JSON.stringify(answers, null, 2)], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filenameFor(answers);
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showStatus("JSON downloaded");
+      });
+
+      document.getElementById("saveLocal").addEventListener("click", () => {
+        localStorage.setItem("brixham-swim-preferences", JSON.stringify(collectAnswers()));
+        showStatus("Preferences saved to this device");
+      });
+
+      document.getElementById("copyJson").addEventListener("click", async () => {
+        const answers = collectAnswers();
+        const text = JSON.stringify(answers, null, 2);
+        try {
+          await navigator.clipboard.writeText(text);
+          showStatus("JSON copied");
+        } catch {
+          showStatus("Copy blocked by browser; use download instead");
+        }
+      });
+    </script>
+  </body>
+</html>
