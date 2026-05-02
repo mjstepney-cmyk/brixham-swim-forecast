@@ -20,6 +20,7 @@
           <h1>Swim conditions</h1>
           <p id="lastUpdated" class="muted">Loading latest forecast...</p>
         </div>
+        <button id="refreshButton" class="refresh-button" type="button">Refresh</button>
       </section>
 
       <section class="beach-visual" aria-label="Pictorial beach conditions">
@@ -112,13 +113,13 @@
 
       <section class="section-head">
         <h2>Next good windows</h2>
-        <p>Best-looking daylight slots from the forecast.</p>
+        <p>Grouped daylight periods from the next 48 hours.</p>
       </section>
       <div id="windowsList" class="windows-list"></div>
 
       <section class="section-head">
-        <h2>Eight day outlook</h2>
-        <p>Confidence drops after the first few days, especially for wind and waves.</p>
+        <h2>Next 7 days</h2>
+        <p>Daily read with tide turns, wind, waves and weather.</p>
       </section>
       <div id="dailyList" class="daily-list"></div>
 
@@ -127,8 +128,9 @@
         <p>
           This prototype uses Open-Meteo weather and marine forecasts. Tide is shown as modelled sea
           level, not an official tide table. Use ADMIRALTY EasyTide to verify Brixham tide times.
-          A production version should use the UKHO Admiralty Tidal API, Environment Agency bathing
-          water warnings and South West Water overflow status.
+          A production version should use the UKHO Admiralty Tidal API. The water-quality panel now
+          checks Environment Agency short-term pollution warnings and links out to WaterFit/SAS
+          for overflow context.
         </p>
         <p>
           <a class="text-link" href="https://easytide.admiralty.co.uk/?PortID=0510" target="_blank" rel="noopener">Open ADMIRALTY EasyTide for Brixham</a>

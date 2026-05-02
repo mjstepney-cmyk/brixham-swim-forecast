@@ -8,6 +8,7 @@ import {
   renderDaily,
   renderError,
   renderQuality,
+  setRefreshState,
   renderWeatherOnly,
   renderWindows,
   setForecastHours,
@@ -18,6 +19,7 @@ let lastRefreshStartedAt = 0;
 
 async function boot(options = {}) {
   try {
+    setRefreshState("refreshing");
     lastRefreshStartedAt = Date.now();
     const preferences = readStoredPreferences();
     const [weatherResult, marineResult, qualityResult] = await Promise.allSettled([
@@ -60,8 +62,10 @@ async function boot(options = {}) {
     renderWindows(hours);
     renderDaily(hours);
     bindForecastCards();
+    setRefreshState("idle");
   } catch (error) {
     renderError(error);
+    setRefreshState("idle");
   }
 }
 
@@ -74,6 +78,10 @@ function refreshForecast(options = {}) {
 }
 
 refreshForecast();
+
+document.getElementById("refreshButton")?.addEventListener("click", () => {
+  refreshForecast({ forceRefresh: true });
+});
 
 setInterval(() => {
   refreshForecast({ forceRefresh: true });

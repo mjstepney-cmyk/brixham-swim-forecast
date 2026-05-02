@@ -818,3 +818,65 @@ h2 {
     font-size: 1.18rem;
   }
 }
+
+
+.refresh-button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  border: 1px solid rgba(11, 82, 100, 0.25);
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #ffffff;
+  color: var(--teal);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+  box-shadow: 0 10px 24px rgba(16, 36, 42, 0.06);
+}
+
+.refresh-button:disabled {
+  opacity: 0.68;
+  cursor: wait;
+}
+
+.quality-meta {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.quality-link {
+  margin-left: 12px;
+}
+
+.day-periods {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.day-periods span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.day-periods strong {
+  display: inline;
+  margin: 0 5px 0 0;
+  color: var(--teal);
+}
+
+@media (max-width: 430px) {
+  .hero {
+    align-items: center;
+  }
+
+  .refresh-button {
+    min-width: 86px;
+    padding: 0 10px;
+  }
+
+  .quality-link {
+    display: block;
+    margin: 8px 0 0;
+  }
+}

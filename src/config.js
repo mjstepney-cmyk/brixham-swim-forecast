@@ -5,7 +5,7 @@ export const BEACH = {
   timezone: "Europe/London",
 };
 
-export const FORECAST_DAYS = 8;
+export const FORECAST_DAYS = 7;
 export const CACHE_TTL_MS = 15 * 60 * 1000;
 export const CACHE_PREFIX = "brixham-swim-cache:";
 export const PREFERENCE_KEY = "brixham-swim-preferences";

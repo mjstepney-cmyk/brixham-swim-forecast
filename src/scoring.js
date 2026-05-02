@@ -166,6 +166,7 @@ export function combineHours(weather, marine, preferences) {
       gusts: weather.hourly.wind_gusts_10m[index],
       windDirection: weather.hourly.wind_direction_10m[index],
       weatherCode: weather.hourly.weather_code[index],
+      precipitation: weather.hourly.precipitation?.[index] ?? 0,
       uv: weather.hourly.uv_index[index],
       waveHeight: marine.hourly.wave_height[marineIndex],
       waveDirection: marine.hourly.wave_direction[marineIndex],
@@ -186,21 +187,87 @@ export function combineHours(weather, marine, preferences) {
 export function applyQualityStatus(hours, quality) {
   if (quality?.state !== "blocked") return;
   hours.forEach((hour) => {
-    hour.score = 0;
-    hour.scoreReason = "official water quality warning";
+    hour.qualityWarning = true;
   });
 }
 
+function windowRank(hour) {
+  return hour.score + (Number.isFinite(hour.tideFullness) ? hour.tideFullness * 4 : 0);
+}
+
+function windowReason(window) {
+  const reasons = [];
+  if (window.best.waveHeight <= 0.45) reasons.push("lower waves");
+  if (window.best.windSpeed <= 16) reasons.push("lighter wind");
+  if (window.best.rainRisk <= 35) reasons.push("lower rain risk");
+  if (Math.abs(window.best.minutesToHighTide || 999) <= 90) reasons.push("near high tide");
+  return reasons.slice(0, 2).join(", ") || scoreAdvice(window.best.score, window.best);
+}
+
 export function daylightWindows(hours) {
-  return hours
-    .filter((hour) => {
-      const date = new Date(hour.time);
-      const localHour = date.getHours();
-      return localHour >= 6 && localHour <= 21;
-    })
-    .sort((a, b) => b.score + b.tideFullness * 4 - (a.score + a.tideFullness * 4))
+  const horizon = Date.now() + 48 * 60 * 60 * 1000;
+  const candidates = hours.filter((hour) => {
+    const date = new Date(hour.time);
+    const localHour = date.getHours();
+    return date.getTime() <= horizon && localHour >= 6 && localHour <= 21 && hour.score >= 58;
+  });
+  const windows = [];
+  let current = null;
+
+  candidates.forEach((hour) => {
+    const hourTime = new Date(hour.time).getTime();
+    const previousTime = current ? new Date(current.end.time).getTime() : null;
+    if (!current || hourTime - previousTime > 75 * 60 * 1000) {
+      current = { start: hour, end: hour, hours: [hour], best: hour };
+      windows.push(current);
+    } else {
+      current.end = hour;
+      current.hours.push(hour);
+      if (windowRank(hour) > windowRank(current.best)) current.best = hour;
+    }
+  });
+
+  return windows
+    .map((window) => ({
+      ...window,
+      averageScore: Math.round(window.hours.reduce((sum, hour) => sum + hour.score, 0) / window.hours.length),
+      reason: windowReason(window),
+    }))
+    .sort((a, b) => windowRank(b.best) - windowRank(a.best))
     .slice(0, 5)
-    .sort((a, b) => new Date(a.time) - new Date(b.time));
+    .sort((a, b) => new Date(a.start.time) - new Date(b.start.time));
+}
+
+function tideEvents(bucket) {
+  const events = [];
+  bucket.forEach((hour, index) => {
+    const previous = bucket[index - 1]?.seaLevel;
+    const next = bucket[index + 1]?.seaLevel;
+    if (!Number.isFinite(hour.seaLevel) || !Number.isFinite(previous) || !Number.isFinite(next)) return;
+    if (hour.seaLevel >= previous && hour.seaLevel > next) events.push({ type: "High", time: hour.time });
+    if (hour.seaLevel <= previous && hour.seaLevel < next) events.push({ type: "Low", time: hour.time });
+  });
+  return events;
+}
+
+function periodSummary(bucket) {
+  const usable = bucket.length ? bucket : [];
+  const best = [...usable].sort((a, b) => windowRank(b) - windowRank(a))[0] || usable[0];
+  const weatherCounts = new Map();
+  usable.forEach((hour) => {
+    weatherCounts.set(hour.weatherCode, (weatherCounts.get(hour.weatherCode) || 0) + 1);
+  });
+  const weatherCode = [...weatherCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? best?.weatherCode;
+  return {
+    best,
+    score: best?.score ?? 0,
+    weatherCode,
+    windDirection: best?.windDirection,
+    averageWind: usable.reduce((sum, hour) => sum + (hour.windSpeed || 0), 0) / (usable.length || 1),
+    maxWind: Math.max(...usable.map((hour) => hour.windSpeed || 0)),
+    maxWave: Math.max(...usable.map((hour) => hour.waveHeight || 0)),
+    rainRisk: Math.max(...usable.map((hour) => hour.rainRisk || 0)),
+  };
 }
 
 export function groupByDay(hours) {
@@ -211,14 +278,26 @@ export function groupByDay(hours) {
     bucket.push(hour);
     days.set(key, bucket);
   });
-  return [...days.entries()].map(([date, bucket]) => {
+  return [...days.entries()].slice(0, 7).map(([date, bucket]) => {
     const daylight = bucket.filter((hour) => {
       const localHour = new Date(hour.time).getHours();
       return localHour >= 6 && localHour <= 21;
     });
-    const best = daylight.sort((a, b) => b.score + b.tideFullness * 4 - (a.score + a.tideFullness * 4))[0] || bucket[0];
-    const maxWave = Math.max(...bucket.map((hour) => hour.waveHeight || 0));
-    const maxWind = Math.max(...bucket.map((hour) => hour.windSpeed || 0));
-    return { date, best, maxWave, maxWind };
+    const best = [...daylight].sort((a, b) => windowRank(b) - windowRank(a))[0] || bucket[0];
+    const morning = bucket.filter((hour) => {
+      const localHour = new Date(hour.time).getHours();
+      return localHour >= 6 && localHour < 12;
+    });
+    const afternoon = bucket.filter((hour) => {
+      const localHour = new Date(hour.time).getHours();
+      return localHour >= 12 && localHour <= 21;
+    });
+    return {
+      date,
+      best,
+      morning: periodSummary(morning),
+      afternoon: periodSummary(afternoon),
+      tideEvents: tideEvents(bucket),
+    };
   });
 }

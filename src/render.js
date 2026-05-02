@@ -62,20 +62,65 @@ function tideArrow(hour) {
   return "→";
 }
 
+function timeText(time) {
+  return new Date(time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function dateText(time) {
+  return new Date(time).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+}
+
+function periodDiffers(day) {
+  if (!day.morning?.best || !day.afternoon?.best) return false;
+  return (
+    Math.abs(day.morning.maxWave - day.afternoon.maxWave) >= 0.25 ||
+    Math.abs(day.morning.maxWind - day.afternoon.maxWind) >= 8 ||
+    Math.abs(day.morning.rainRisk - day.afternoon.rainRisk) >= 35 ||
+    day.morning.weatherCode !== day.afternoon.weatherCode
+  );
+}
+
+function periodLine(label, period) {
+  if (!period?.best) return "";
+  return `<span><strong>${label}</strong> ${weatherText(period.weatherCode)}, ${cardinal(period.windDirection)} ${fmt(period.averageWind, " km/h")}, waves to ${fmt(period.maxWave, " m", 1)}</span>`;
+}
+
+function tideEventText(events) {
+  if (!events?.length) return "Tide times unavailable";
+  return events
+    .slice(0, 4)
+    .map((event) => `${event.type} ${timeText(event.time)}`)
+    .join(" · ");
+}
+
 function renderVisualTideReadout(hour) {
   $("visualTideArrow").textContent = tideArrow(hour);
   $("visualTide").textContent = tideSummary(hour);
 }
 
+export function setRefreshState(state) {
+  const button = $("refreshButton");
+  if (!button) return;
+  button.disabled = state === "refreshing";
+  button.textContent = state === "refreshing" ? "Refreshing..." : "Refresh";
+}
+
 export function renderQuality(quality) {
   const card = $("waterQualityCard");
   if (!card) return;
+  const checked = quality.checkedAt
+    ? new Date(quality.checkedAt).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })
+    : "just now";
   card.className = `notice quality-card ${quality.state}`;
   card.innerHTML = `
     <h2>Water quality</h2>
     <p><strong>${quality.label}</strong></p>
     <p>${quality.detail}</p>
-    <p><a class="text-link" href="https://datahq.sas.org.uk/sewage-data-hq/is-it-safe-to-swim/" target="_blank" rel="noopener">Check Surfers Against Sewage alerts</a></p>
+    <p class="quality-meta">EA feed checked ${checked}. Also check WaterFit/SAS if recent rain or overflow risk matters today.</p>
+    <p>
+      <a class="text-link" href="https://www.southwestwater.co.uk/breakwater-shoalstone" target="_blank" rel="noopener">Open WaterFit Live</a>
+      <a class="text-link quality-link" href="https://datahq.sas.org.uk/sewage-data-hq/is-it-safe-to-swim/" target="_blank" rel="noopener">Open SAS alerts</a>
+    </p>
   `;
 }
 
@@ -162,7 +207,7 @@ export function renderCurrent(weather, marine, hours, meta = {}) {
   $("summaryCard").innerHTML = `
     <p class="status-label">${scoreLabel(score)}</p>
     <h2>${weatherText(nowWeather.weather_code)} now. ${scoreAdvice(score, current)}.</h2>
-    <p class="muted">Use this as a swim-planning signal, then check local signage, lifeguard flags and your own ability before entering the water.</p>
+    <p class="muted">A quick conditions read for swimmers who already know this beach. Use the refresh button if the app has been open for a while.</p>
   `;
   const cachedAt = meta.cachedAt ? new Date(meta.cachedAt) : null;
   $("lastUpdated").textContent = `${cachedAt ? "Cached" : "Updated"} ${new Date(cachedAt || Date.now()).toLocaleString("en-GB", {
@@ -207,35 +252,40 @@ export function renderWeatherOnly(weather, meta = {}) {
 }
 
 export function renderWindows(hours) {
-  $("windowsList").innerHTML = daylightWindows(hours)
-    .map((hour) => {
-      const date = new Date(hour.time);
-      const tidePercent = Number.isFinite(hour.tideFullness) ? Math.round(hour.tideFullness * 100) : null;
-      return `
-        <article class="window forecast-card" tabindex="0" role="button" data-forecast-time="${hour.time}">
-          <div>
-            <strong>${date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}, ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</strong>
-            <small>${fmt(hour.waveHeight, " m", 1)} waves, ${fmt(hour.windSpeed, " km/h")} wind, ${fmt(hour.rainRisk, "%")} rain risk</small>
-            <span class="tide-chip">${tidePercent ?? "--"}% high tide - ${hour.highTideLabel}</span>
-          </div>
-          <span class="pill ${scoreClass(hour.score)}">${hour.score}</span>
-        </article>
-      `;
-    })
-    .join("");
+  const windows = daylightWindows(hours);
+  $("windowsList").innerHTML = windows.length
+    ? windows
+        .map((window) => {
+          const tidePercent = Number.isFinite(window.best.tideFullness) ? Math.round(window.best.tideFullness * 100) : null;
+          return `
+            <article class="window forecast-card" tabindex="0" role="button" data-forecast-time="${window.best.time}">
+              <div>
+                <strong>${dateText(window.start.time)}, ${timeText(window.start.time)}-${timeText(new Date(new Date(window.end.time).getTime() + 60 * 60 * 1000))}</strong>
+                <small>${window.reason}; ${fmt(window.best.waveHeight, " m", 1)} waves, ${fmt(window.best.windSpeed, " km/h")} wind, ${fmt(window.best.rainRisk, "%")} rain risk</small>
+                <span class="tide-chip">${tidePercent ?? "--"}% high tide - ${window.best.highTideLabel}</span>
+              </div>
+              <span class="pill ${scoreClass(window.averageScore)}">${window.averageScore}</span>
+            </article>
+          `;
+        })
+        .join("")
+    : `<article class="window"><div><strong>No clear grouped windows in the next 48 hours</strong><small>Conditions may still be usable locally; the model did not find a stronger daylight period.</small></div><span class="pill watch">--</span></article>`;
 }
 
 export function renderDaily(hours) {
   $("dailyList").innerHTML = groupByDay(hours)
     .map((day) => {
       const date = new Date(`${day.date}T12:00:00`);
-      const tidePercent = Number.isFinite(day.best.tideFullness) ? Math.round(day.best.tideFullness * 100) : null;
+      const split = periodDiffers(day);
       return `
         <article class="day forecast-card" tabindex="0" role="button" data-forecast-time="${day.best.time}">
           <div>
             <strong>${date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</strong>
-            <small>Best around ${new Date(day.best.time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}; max waves ${fmt(day.maxWave, " m", 1)}, max wind ${fmt(day.maxWind, " km/h")}</small>
-            <span class="tide-chip">${tidePercent ?? "--"}% high tide - ${day.best.highTideLabel}</span>
+            <small>Best around ${timeText(day.best.time)}; ${weatherText(day.best.weatherCode)}, ${cardinal(day.best.windDirection)} ${fmt(day.best.windSpeed, " km/h")} wind, waves to ${fmt(Math.max(day.morning.maxWave, day.afternoon.maxWave), " m", 1)}</small>
+            <div class="day-periods">
+              ${split ? periodLine("AM", day.morning) + periodLine("PM", day.afternoon) : periodLine("Day", day.morning.best ? day.morning : day.afternoon)}
+            </div>
+            <span class="tide-chip">${tideEventText(day.tideEvents)}</span>
           </div>
           <span class="pill ${scoreClass(day.best.score)}">${day.best.score}</span>
         </article>

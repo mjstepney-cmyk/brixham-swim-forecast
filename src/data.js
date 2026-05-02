@@ -35,19 +35,70 @@ export async function fetchJsonWithCache(url, key, options = {}) {
   }
 }
 
+function asItems(data) {
+  const raw = data?.result?.items || data?.items || [];
+  return Array.isArray(raw) ? raw : [];
+}
+
+function readDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function itemText(item) {
+  return JSON.stringify(item || {}).toLowerCase();
+}
+
+function itemDate(item) {
+  return (
+    readDate(item?.predictedAt) ||
+    readDate(item?.sampleDateTime) ||
+    readDate(item?.samplingDateTime) ||
+    readDate(item?.date) ||
+    readDate(item?.created)
+  );
+}
+
+function hasWarningLanguage(item) {
+  const text = itemText(item);
+  return (
+    text.includes("advice against bathing") ||
+    text.includes("pollution risk") ||
+    text.includes("short term pollution") ||
+    text.includes("abnormal situation")
+  );
+}
+
+function isCurrentWarning(item, today) {
+  const text = itemText(item);
+  if (!hasWarningLanguage(item)) return false;
+  return text.includes(today) || !itemDate(item);
+}
+
 export function parseQualityStatus(data) {
-  const items = data?.result?.items || data?.items || [];
-  const today = new Date().toISOString().slice(0, 10);
-  const currentRisk = items.find((item) => JSON.stringify(item).includes(today));
-  return currentRisk
-    ? {
-        state: "blocked",
-        label: "Advice against bathing",
-        detail: "Environment Agency data appears to include a current warning for Breakwater Beach (Shoalstone). Treat this as do not swim until checked locally.",
-      }
-    : {
-        state: "clear",
-        label: "No EA warning found",
-        detail: "The Environment Agency check did not return a current short-term pollution warning for Breakwater Beach (Shoalstone). Still check local signs and water-quality sources before swimming.",
-      };
+  const items = asItems(data);
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const currentRisk = items.find((item) => isCurrentWarning(item, today));
+  const latest = items
+    .map((item) => ({ item, date: itemDate(item) }))
+    .filter((entry) => entry.date)
+    .sort((a, b) => b.date - a.date)[0];
+
+  if (currentRisk) {
+    return {
+      state: "blocked",
+      label: "EA pollution warning found",
+      detail: "The Environment Agency feed appears to include a current short-term pollution warning for Breakwater Beach / Shoalstone.",
+      checkedAt: latest?.date || now,
+    };
+  }
+
+  return {
+    state: "clear",
+    label: "No current EA warning found",
+    detail: "The Environment Agency feed did not return a current short-term pollution warning for Breakwater Beach / Shoalstone.",
+    checkedAt: latest?.date || now,
+  };
 }
