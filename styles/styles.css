@@ -903,6 +903,13 @@ h2 {
   line-height: 1.35;
 }
 
+.day-detail .marine-detail {
+  margin: -3px 0 4px;
+  color: var(--teal);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
 .tide-times-top {
   margin: 10px 0 8px;
   border-color: rgba(74, 168, 162, 0.28);

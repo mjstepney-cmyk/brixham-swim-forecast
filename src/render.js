@@ -108,6 +108,17 @@ function tideBlock(events) {
   `;
 }
 
+function marineDetailText(hour) {
+  const parts = [];
+  if (Number.isFinite(hour.swellHeight)) {
+    parts.push(`swell ${fmt(hour.swellHeight, " m", 1)}${Number.isFinite(hour.swellPeriod) ? ` / ${fmt(hour.swellPeriod, "s")}` : ""}`);
+  }
+  if (Number.isFinite(hour.windWaveHeight)) {
+    parts.push(`wind wave ${fmt(hour.windWaveHeight, " m", 1)}`);
+  }
+  return parts.length ? parts.join(", ") : `${fmt(hour.waveHeight, " m", 1)} waves`;
+}
+
 function dayDetail(day) {
   if (!day.windows?.length) {
     return `
@@ -124,6 +135,7 @@ function dayDetail(day) {
         .map(
           (window) => `
             <span>${timeText(window.start.time)}-${timeText(new Date(new Date(window.end.time).getTime() + 60 * 60 * 1000))}: ${window.reason}; ${fmt(window.best.waveHeight, " m", 1)} waves, ${cardinal(window.best.windDirection)} ${fmt(window.best.windSpeed, " km/h")} wind, ${fmt(window.best.rainRisk, "%")} rain risk</span>
+            <span class="marine-detail">${marineDetailText(window.best)}</span>
           `
         )
         .join("")}

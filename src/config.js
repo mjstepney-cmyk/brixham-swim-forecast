@@ -6,6 +6,7 @@ export const BEACH = {
 };
 
 export const FORECAST_DAYS = 7;
+export const FORECAST_HOURS = FORECAST_DAYS * 24;
 export const CACHE_TTL_MS = 15 * 60 * 1000;
 export const CACHE_PREFIX = "brixham-swim-cache:";
 export const PREFERENCE_KEY = "brixham-swim-preferences";
@@ -20,15 +21,16 @@ weatherUrl.search = new URLSearchParams({
   latitude: BEACH.latitude,
   longitude: BEACH.longitude,
   timezone: BEACH.timezone,
-  forecast_days: FORECAST_DAYS,
+  models: "ukmo_seamless",
+  forecast_hours: FORECAST_HOURS,
   hourly: [
     "temperature_2m",
     "apparent_temperature",
     "precipitation_probability",
+    "precipitation",
     "wind_speed_10m",
     "wind_gusts_10m",
     "wind_direction_10m",
-    "uv_index",
     "weather_code",
   ].join(","),
   current: [
@@ -47,14 +49,21 @@ marineUrl.search = new URLSearchParams({
   latitude: BEACH.latitude,
   longitude: BEACH.longitude,
   timezone: BEACH.timezone,
-  forecast_days: FORECAST_DAYS,
+  forecast_hours: FORECAST_HOURS,
   cell_selection: "sea",
   hourly: [
     "wave_height",
     "wave_direction",
     "wave_period",
+    "wind_wave_height",
+    "wind_wave_direction",
+    "wind_wave_period",
     "swell_wave_height",
     "swell_wave_direction",
+    "swell_wave_period",
+    "secondary_swell_wave_height",
+    "secondary_swell_wave_direction",
+    "secondary_swell_wave_period",
     "sea_surface_temperature",
     "sea_level_height_msl",
     "ocean_current_velocity",

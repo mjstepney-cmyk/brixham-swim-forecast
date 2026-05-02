@@ -154,24 +154,47 @@ export function annotateTides(hours) {
   return hours;
 }
 
+function rainRiskFromWeather(probability, precipitation, weatherCode) {
+  if (Number.isFinite(probability)) return probability;
+  if (Number.isFinite(precipitation)) {
+    if (precipitation >= 2) return 85;
+    if (precipitation >= 1) return 70;
+    if (precipitation > 0) return 45;
+  }
+  if (weatherCode >= 80) return 60;
+  if (weatherCode >= 61 && weatherCode <= 65) return 55;
+  if (weatherCode >= 51 && weatherCode <= 55) return 40;
+  return 10;
+}
+
 export function combineHours(weather, marine, preferences) {
   const hours = weather.hourly.time.map((time, index) => {
     const marineIndex = nearestIndex(marine.hourly.time, new Date(time));
+    const precipitation = weather.hourly.precipitation?.[index] ?? 0;
+    const weatherCode = weather.hourly.weather_code[index];
     return {
       time,
       temp: weather.hourly.temperature_2m[index],
       feels: weather.hourly.apparent_temperature[index],
-      rainRisk: weather.hourly.precipitation_probability[index],
+      rainRisk: rainRiskFromWeather(weather.hourly.precipitation_probability?.[index], precipitation, weatherCode),
       windSpeed: weather.hourly.wind_speed_10m[index],
       gusts: weather.hourly.wind_gusts_10m[index],
       windDirection: weather.hourly.wind_direction_10m[index],
-      weatherCode: weather.hourly.weather_code[index],
-      precipitation: weather.hourly.precipitation?.[index] ?? 0,
-      uv: weather.hourly.uv_index[index],
+      weatherCode,
+      precipitation,
+      uv: weather.hourly.uv_index?.[index],
       waveHeight: marine.hourly.wave_height[marineIndex],
       waveDirection: marine.hourly.wave_direction[marineIndex],
       wavePeriod: marine.hourly.wave_period[marineIndex],
+      windWaveHeight: marine.hourly.wind_wave_height?.[marineIndex],
+      windWaveDirection: marine.hourly.wind_wave_direction?.[marineIndex],
+      windWavePeriod: marine.hourly.wind_wave_period?.[marineIndex],
       swellHeight: marine.hourly.swell_wave_height[marineIndex],
+      swellDirection: marine.hourly.swell_wave_direction?.[marineIndex],
+      swellPeriod: marine.hourly.swell_wave_period?.[marineIndex],
+      secondarySwellHeight: marine.hourly.secondary_swell_wave_height?.[marineIndex],
+      secondarySwellDirection: marine.hourly.secondary_swell_wave_direction?.[marineIndex],
+      secondarySwellPeriod: marine.hourly.secondary_swell_wave_period?.[marineIndex],
       waterTemp: marine.hourly.sea_surface_temperature[marineIndex],
       seaLevel: marine.hourly.sea_level_height_msl[marineIndex],
       current: marine.hourly.ocean_current_velocity[marineIndex],
