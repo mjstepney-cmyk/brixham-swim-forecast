@@ -209,7 +209,7 @@ export function daylightWindows(hours) {
   const candidates = hours.filter((hour) => {
     const date = new Date(hour.time);
     const localHour = date.getHours();
-    return date.getTime() <= horizon && localHour >= 6 && localHour <= 21 && hour.score >= 58;
+    return date.getTime() <= horizon && localHour >= 6 && localHour <= 21 && hour.score >= 70;
   });
   const windows = [];
   let current = null;
@@ -217,7 +217,14 @@ export function daylightWindows(hours) {
   candidates.forEach((hour) => {
     const hourTime = new Date(hour.time).getTime();
     const previousTime = current ? new Date(current.end.time).getTime() : null;
-    if (!current || hourTime - previousTime > 75 * 60 * 1000) {
+    const isLong = current && current.hours.length >= 4;
+    const conditionShift =
+      current &&
+      (Math.abs(hour.score - current.end.score) > 10 ||
+        Math.abs(hour.waveHeight - current.end.waveHeight) > 0.2 ||
+        Math.abs(hour.windSpeed - current.end.windSpeed) > 8 ||
+        Math.abs(hour.rainRisk - current.end.rainRisk) > 25);
+    if (!current || hourTime - previousTime > 75 * 60 * 1000 || isLong || conditionShift) {
       current = { start: hour, end: hour, hours: [hour], best: hour };
       windows.push(current);
     } else {
@@ -233,6 +240,7 @@ export function daylightWindows(hours) {
       averageScore: Math.round(window.hours.reduce((sum, hour) => sum + hour.score, 0) / window.hours.length),
       reason: windowReason(window),
     }))
+    .filter((window) => window.hours.length >= 2 || window.best.score >= 82)
     .sort((a, b) => windowRank(b.best) - windowRank(a.best))
     .slice(0, 5)
     .sort((a, b) => new Date(a.start.time) - new Date(b.start.time));
@@ -270,6 +278,36 @@ function periodSummary(bucket) {
   };
 }
 
+function bestDayWindows(bucket) {
+  const windows = [];
+  let current = null;
+  bucket
+    .filter((hour) => {
+      const localHour = new Date(hour.time).getHours();
+      return localHour >= 6 && localHour <= 21 && hour.score >= 68;
+    })
+    .forEach((hour) => {
+      const hourTime = new Date(hour.time).getTime();
+      const previousTime = current ? new Date(current.end.time).getTime() : null;
+      if (!current || hourTime - previousTime > 75 * 60 * 1000 || current.hours.length >= 4) {
+        current = { start: hour, end: hour, hours: [hour], best: hour };
+        windows.push(current);
+      } else {
+        current.end = hour;
+        current.hours.push(hour);
+        if (windowRank(hour) > windowRank(current.best)) current.best = hour;
+      }
+    });
+  return windows
+    .map((window) => ({
+      ...window,
+      averageScore: Math.round(window.hours.reduce((sum, hour) => sum + hour.score, 0) / window.hours.length),
+      reason: windowReason(window),
+    }))
+    .sort((a, b) => windowRank(b.best) - windowRank(a.best))
+    .slice(0, 3);
+}
+
 export function groupByDay(hours) {
   const days = new Map();
   hours.forEach((hour) => {
@@ -298,6 +336,7 @@ export function groupByDay(hours) {
       morning: periodSummary(morning),
       afternoon: periodSummary(afternoon),
       tideEvents: tideEvents(bucket),
+      windows: bestDayWindows(bucket),
     };
   });
 }

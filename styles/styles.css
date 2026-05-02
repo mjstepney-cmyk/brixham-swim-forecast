@@ -850,18 +850,84 @@ h2 {
 
 .day-periods {
   display: grid;
-  gap: 5px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   margin-top: 8px;
 }
 
-.day-periods span {
+.day-main {
+  display: grid;
+  grid-template-columns: 1fr minmax(130px, 0.45fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.period-card,
+.tide-times,
+.day-detail {
+  border: 1px solid rgba(11, 82, 100, 0.1);
+  border-radius: 8px;
+  background: rgba(11, 82, 100, 0.04);
+  padding: 8px;
+}
+
+.day-periods span,
+.tide-times span,
+.day-detail span {
   color: var(--muted);
   font-size: 0.82rem;
 }
 
 .day-periods strong {
-  display: inline;
-  margin: 0 5px 0 0;
+  display: block;
+  margin: 0 0 4px;
+  color: var(--teal);
+}
+
+.period-card em {
+  display: block;
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 850;
+}
+
+.period-card small,
+.tide-times small {
+  display: block;
+  margin-top: 4px;
+}
+
+.tide-times span,
+.day-detail span {
+  display: block;
+  line-height: 1.35;
+}
+
+.details-button {
+  margin-top: 10px;
+  border: 0;
+  border-bottom: 2px solid currentColor;
+  padding: 0;
+  background: transparent;
+  color: var(--teal);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+}
+
+.day-detail {
+  display: none;
+  margin-top: 10px;
+}
+
+.day-card.expanded .day-detail {
+  display: grid;
+  gap: 6px;
+}
+
+.quiet-pill {
+  min-width: 62px;
+  background: rgba(11, 82, 100, 0.08);
   color: var(--teal);
 }
 
@@ -878,5 +944,18 @@ h2 {
   .quality-link {
     display: block;
     margin: 8px 0 0;
+  }
+
+  .day {
+    grid-template-columns: 1fr;
+  }
+
+  .day-main,
+  .day-periods {
+    grid-template-columns: 1fr;
+  }
+
+  .quiet-pill {
+    justify-self: start;
   }
 }

@@ -82,7 +82,13 @@ function periodDiffers(day) {
 
 function periodLine(label, period) {
   if (!period?.best) return "";
-  return `<span><strong>${label}</strong> ${weatherText(period.weatherCode)}, ${cardinal(period.windDirection)} ${fmt(period.averageWind, " km/h")}, waves to ${fmt(period.maxWave, " m", 1)}</span>`;
+  return `
+    <span class="period-card">
+      <strong>${label}</strong>
+      <em>${cardinal(period.windDirection)} ${fmt(period.averageWind, " km/h")}</em>
+      <small>${weatherText(period.weatherCode)} · waves to ${fmt(period.maxWave, " m", 1)}</small>
+    </span>
+  `;
 }
 
 function tideEventText(events) {
@@ -91,6 +97,29 @@ function tideEventText(events) {
     .slice(0, 4)
     .map((event) => `${event.type} ${timeText(event.time)}`)
     .join(" · ");
+}
+
+function dayDetail(day) {
+  if (!day.windows?.length) {
+    return `
+      <div class="day-detail">
+        <strong>No standout swim period from the model</strong>
+        <span>The daily conditions may still be usable locally; the model did not find a stronger daylight block.</span>
+      </div>
+    `;
+  }
+  return `
+    <div class="day-detail">
+      <strong>Best detail</strong>
+      ${day.windows
+        .map(
+          (window) => `
+            <span>${timeText(window.start.time)}-${timeText(new Date(new Date(window.end.time).getTime() + 60 * 60 * 1000))}: ${window.reason}; ${fmt(window.best.waveHeight, " m", 1)} waves, ${cardinal(window.best.windDirection)} ${fmt(window.best.windSpeed, " km/h")} wind, ${fmt(window.best.rainRisk, "%")} rain risk</span>
+          `
+        )
+        .join("")}
+    </div>
+  `;
 }
 
 function renderVisualTideReadout(hour) {
@@ -207,7 +236,6 @@ export function renderCurrent(weather, marine, hours, meta = {}) {
   $("summaryCard").innerHTML = `
     <p class="status-label">${scoreLabel(score)}</p>
     <h2>${weatherText(nowWeather.weather_code)} now. ${scoreAdvice(score, current)}.</h2>
-    <p class="muted">A quick conditions read for swimmers who already know this beach. Use the refresh button if the app has been open for a while.</p>
   `;
   const cachedAt = meta.cachedAt ? new Date(meta.cachedAt) : null;
   $("lastUpdated").textContent = `${cachedAt ? "Cached" : "Updated"} ${new Date(cachedAt || Date.now()).toLocaleString("en-GB", {
@@ -261,7 +289,7 @@ export function renderWindows(hours) {
             <article class="window forecast-card" tabindex="0" role="button" data-forecast-time="${window.best.time}">
               <div>
                 <strong>${dateText(window.start.time)}, ${timeText(window.start.time)}-${timeText(new Date(new Date(window.end.time).getTime() + 60 * 60 * 1000))}</strong>
-                <small>${window.reason}; ${fmt(window.best.waveHeight, " m", 1)} waves, ${fmt(window.best.windSpeed, " km/h")} wind, ${fmt(window.best.rainRisk, "%")} rain risk</small>
+            <small>${window.reason}; ${fmt(window.best.waveHeight, " m", 1)} waves, ${fmt(window.best.windSpeed, " km/h")} wind, ${fmt(window.best.rainRisk, "%")} rain risk</small>
                 <span class="tide-chip">${tidePercent ?? "--"}% high tide - ${window.best.highTideLabel}</span>
               </div>
               <span class="pill ${scoreClass(window.averageScore)}">${window.averageScore}</span>
@@ -278,16 +306,22 @@ export function renderDaily(hours) {
       const date = new Date(`${day.date}T12:00:00`);
       const split = periodDiffers(day);
       return `
-        <article class="day forecast-card" tabindex="0" role="button" data-forecast-time="${day.best.time}">
+        <article class="day forecast-card day-card" tabindex="0" role="button" data-forecast-time="${day.best.time}">
           <div>
             <strong>${date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</strong>
-            <small>Best around ${timeText(day.best.time)}; ${weatherText(day.best.weatherCode)}, ${cardinal(day.best.windDirection)} ${fmt(day.best.windSpeed, " km/h")} wind, waves to ${fmt(Math.max(day.morning.maxWave, day.afternoon.maxWave), " m", 1)}</small>
-            <div class="day-periods">
-              ${split ? periodLine("AM", day.morning) + periodLine("PM", day.afternoon) : periodLine("Day", day.morning.best ? day.morning : day.afternoon)}
+            <div class="day-main">
+              <div class="day-periods">
+                ${split ? periodLine("AM", day.morning) + periodLine("PM", day.afternoon) : periodLine("Day", day.morning.best ? day.morning : day.afternoon)}
+              </div>
+              <div class="tide-times">
+                <small>Tides</small>
+                <span>${tideEventText(day.tideEvents)}</span>
+              </div>
             </div>
-            <span class="tide-chip">${tideEventText(day.tideEvents)}</span>
+            <button class="details-button" type="button" aria-expanded="false">Details</button>
+            ${dayDetail(day)}
           </div>
-          <span class="pill ${scoreClass(day.best.score)}">${day.best.score}</span>
+          <span class="pill quiet-pill">${timeText(day.best.time)}</span>
         </article>
       `;
     })
@@ -296,7 +330,14 @@ export function renderDaily(hours) {
 
 export function bindForecastCards() {
   document.querySelectorAll("[data-forecast-time]").forEach((card) => {
-    card.addEventListener("click", () => selectForecastHour(card.dataset.forecastTime));
+    card.addEventListener("click", (event) => {
+      if (event.target.closest(".details-button")) {
+        const expanded = card.classList.toggle("expanded");
+        event.target.setAttribute("aria-expanded", String(expanded));
+        return;
+      }
+      selectForecastHour(card.dataset.forecastTime);
+    });
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
