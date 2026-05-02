@@ -205,11 +205,12 @@ function windowReason(window) {
 }
 
 export function daylightWindows(hours) {
+  const earliestStart = Date.now() + 2 * 60 * 60 * 1000;
   const horizon = Date.now() + 48 * 60 * 60 * 1000;
   const candidates = hours.filter((hour) => {
     const date = new Date(hour.time);
     const localHour = date.getHours();
-    return date.getTime() <= horizon && localHour >= 6 && localHour <= 21 && hour.score >= 70;
+    return date.getTime() >= earliestStart && date.getTime() <= horizon && localHour >= 6 && localHour <= 21 && hour.score >= 70;
   });
   const windows = [];
   let current = null;

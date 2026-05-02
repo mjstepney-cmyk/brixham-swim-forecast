@@ -99,6 +99,15 @@ function tideEventText(events) {
     .join(" · ");
 }
 
+function tideBlock(events) {
+  return `
+    <div class="tide-times tide-times-top">
+      <small>Tides</small>
+      <span>${tideEventText(events)}</span>
+    </div>
+  `;
+}
+
 function dayDetail(day) {
   if (!day.windows?.length) {
     return `
@@ -309,19 +318,15 @@ export function renderDaily(hours) {
         <article class="day forecast-card day-card" tabindex="0" role="button" data-forecast-time="${day.best.time}">
           <div>
             <strong>${date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</strong>
+            ${tideBlock(day.tideEvents)}
             <div class="day-main">
               <div class="day-periods">
                 ${split ? periodLine("AM", day.morning) + periodLine("PM", day.afternoon) : periodLine("Day", day.morning.best ? day.morning : day.afternoon)}
-              </div>
-              <div class="tide-times">
-                <small>Tides</small>
-                <span>${tideEventText(day.tideEvents)}</span>
               </div>
             </div>
             <button class="details-button" type="button" aria-expanded="false">Details</button>
             ${dayDetail(day)}
           </div>
-          <span class="pill quiet-pill">${timeText(day.best.time)}</span>
         </article>
       `;
     })
