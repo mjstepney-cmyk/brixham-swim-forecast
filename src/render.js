@@ -56,12 +56,6 @@ function tideSummary(hour) {
   return "Low";
 }
 
-function tideArrow(hour) {
-  if (hour?.tideTrend === "rising") return "\u2191";
-  if (hour?.tideTrend === "falling") return "\u2193";
-  return "\u2192";
-}
-
 function timeText(time) {
   return new Date(time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
@@ -144,7 +138,6 @@ function dayDetail(day) {
 }
 
 function renderVisualTideReadout(hour) {
-  $("visualTideArrow").textContent = tideArrow(hour);
   $("visualTide").textContent = tideSummary(hour);
 }
 
@@ -312,7 +305,6 @@ export function renderWeatherOnly(weather, meta = {}) {
   $("visualFeels").textContent = fmt(nowWeather.apparent_temperature, " deg C", 1);
   $("visualWave").textContent = "--";
   $("visualTide").textContent = "--";
-  $("visualTideArrow").textContent = "-";
   $("murkyNotice").hidden = true;
   setVisualMode("current");
   $("visualTemp").textContent = "--";

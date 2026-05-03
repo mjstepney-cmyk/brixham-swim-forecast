@@ -578,17 +578,6 @@ h2 {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
-.tide-arrow {
-  display: inline-block;
-  min-width: 1em;
-  color: var(--teal);
-  font-weight: 900;
-}
-
-.tide-readout .tide-arrow {
-  color: #ffffff;
-}
-
 .section-head {
   display: flex;
   align-items: end;
