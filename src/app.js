@@ -1,4 +1,4 @@
-import { CACHE_TTL_MS, marineUrl, qualityUrl, weatherUrl } from "./config.js";
+import { CACHE_TTL_MS, marineUrl, qualityUrl, tidesUrl, weatherUrl } from "./config.js";
 import { fetchJsonWithCache, parseQualityStatus } from "./data.js";
 import { readStoredPreferences } from "./preferences.js";
 import { applyQualityStatus, combineHours } from "./scoring.js";
@@ -22,10 +22,11 @@ async function boot(options = {}) {
     setRefreshState("refreshing");
     lastRefreshStartedAt = Date.now();
     const preferences = readStoredPreferences();
-    const [weatherResult, marineResult, qualityResult] = await Promise.allSettled([
+    const [weatherResult, marineResult, qualityResult, tidesResult] = await Promise.allSettled([
       fetchJsonWithCache(weatherUrl, "weather", options),
       fetchJsonWithCache(marineUrl, "marine", options),
       fetchJsonWithCache(qualityUrl, "quality", options),
+      fetchJsonWithCache(tidesUrl, "tides", options),
     ]);
 
     if (weatherResult.status === "rejected") {
@@ -52,7 +53,8 @@ async function boot(options = {}) {
     }
 
     const marine = marineResult.value.data;
-    const hours = combineHours(weather, marine, preferences);
+    const tides = tidesResult.status === "fulfilled" ? tidesResult.value.data : null;
+    const hours = combineHours(weather, marine, preferences, tides);
     setForecastHours(hours);
     applyQualityStatus(hours, quality);
     renderQuality(quality);

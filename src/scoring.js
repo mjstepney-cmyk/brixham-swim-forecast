@@ -179,6 +179,64 @@ export function annotateTides(hours) {
   return hours;
 }
 
+function normaliseUkhoEvents(tides) {
+  return (tides?.events || [])
+    .map((event) => ({
+      type: event.EventType === "HighWater" ? "High" : event.EventType === "LowWater" ? "Low" : event.type,
+      time: normaliseUkhoTime(event.DateTime || event.time),
+      height: event.Height ?? event.height,
+    }))
+    .filter((event) => (event.type === "High" || event.type === "Low") && event.time)
+    .sort((a, b) => new Date(a.time) - new Date(b.time));
+}
+
+function normaliseUkhoTime(time) {
+  if (!time) return null;
+  return /z$|[+-]\d\d:\d\d$/i.test(time) ? time : `${time}Z`;
+}
+
+function interpolateTideFullness(previous, next, time) {
+  if (!previous || !next) return null;
+  const start = new Date(previous.time).getTime();
+  const end = new Date(next.time).getTime();
+  const current = new Date(time).getTime();
+  if (end <= start || current < start || current > end) return null;
+  const progress = (current - start) / (end - start);
+  if (previous.type === "Low" && next.type === "High") return clamp(progress, 0, 1);
+  if (previous.type === "High" && next.type === "Low") return clamp(1 - progress, 0, 1);
+  return null;
+}
+
+export function applyUkhoTides(hours, tides) {
+  const events = normaliseUkhoEvents(tides);
+  if (events.length < 2) return false;
+
+  hours.forEach((hour) => {
+    const time = new Date(hour.time).getTime();
+    const previous = [...events].reverse().find((event) => new Date(event.time).getTime() <= time);
+    const next = events.find((event) => new Date(event.time).getTime() > time);
+    const fullness = interpolateTideFullness(previous, next, hour.time);
+    if (!Number.isFinite(fullness)) return;
+
+    hour.tideFullness = fullness;
+    hour.tideTrend = previous?.type === "Low" && next?.type === "High" ? "rising" : "falling";
+    hour.nearestHighTide =
+      [previous, next]
+        .filter((event) => event?.type === "High")
+        .map((event) => ({
+          ...event,
+          minutes: Math.round((new Date(event.time).getTime() - time) / 60000),
+        }))
+        .sort((a, b) => Math.abs(a.minutes) - Math.abs(b.minutes))[0] || null;
+    hour.minutesToHighTide = hour.nearestHighTide?.minutes ?? null;
+    hour.highTideLabel = formatHighTideDelta(hour.minutesToHighTide);
+    hour.tideSource = "UKHO";
+    hour.ukhoEvents = events;
+  });
+
+  return true;
+}
+
 function rainRiskFromWeather(probability, precipitation, weatherCode) {
   if (Number.isFinite(probability)) return probability;
   if (Number.isFinite(precipitation)) {
@@ -192,7 +250,7 @@ function rainRiskFromWeather(probability, precipitation, weatherCode) {
   return 10;
 }
 
-export function combineHours(weather, marine, preferences) {
+export function combineHours(weather, marine, preferences, tides = null) {
   const hours = weather.hourly.time.map((time, index) => {
     const marineIndex = nearestIndex(marine.hourly.time, new Date(time));
     const precipitation = weather.hourly.precipitation?.[index] ?? 0;
@@ -226,6 +284,7 @@ export function combineHours(weather, marine, preferences) {
     };
   });
   annotateTides(hours);
+  applyUkhoTides(hours, tides);
   annotateMurkiness(hours);
   hours.forEach((hour) => {
     hour.score = conditionScore(hour, preferences);
@@ -297,6 +356,12 @@ export function daylightWindows(hours) {
 }
 
 function tideEvents(bucket) {
+  const firstUkhoHour = bucket.find((hour) => hour.tideSource === "UKHO" && hour.ukhoEvents?.length);
+  if (firstUkhoHour) {
+    const date = bucket[0]?.time.slice(0, 10);
+    return firstUkhoHour.ukhoEvents.filter((event) => event.time.slice(0, 10) === date);
+  }
+
   const events = [];
   bucket.forEach((hour, index) => {
     const previous = bucket[index - 1]?.seaLevel;

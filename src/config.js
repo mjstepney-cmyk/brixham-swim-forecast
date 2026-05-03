@@ -87,3 +87,5 @@ qualityUrl.search = new URLSearchParams({
   _sort: "-predictedAt",
   bwq_bathingWater: "http://environment.data.gov.uk/id/bathing-water/ukk4200-24500",
 });
+
+export const tidesUrl = "data/tides.json";
