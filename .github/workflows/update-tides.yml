@@ -1,0 +1,33 @@
+name: Update tide data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-tides:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch UKHO tide events
+        run: node tools/fetch-ukho-tides.js
+        env:
+          UKHO_API_KEY: ${{ secrets.UKHO_API_KEY }}
+          UKHO_STATION_ID: "0025"
+
+      - name: Commit updated tide data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update UKHO tide data
+          file_pattern: data/tides.json
