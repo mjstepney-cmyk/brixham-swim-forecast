@@ -6,14 +6,15 @@ export const SCORE_RULES = {
     waveHeight: { limit: 1.5, reason: "wave height over 1.5 m" },
     gusts: { limit: 40, reason: "gusts over 40 km/h" },
   },
-  wave: { comfort: 0.35, penaltyPerMetre: 85, rough: 0.65 },
-  swell: { comfort: 0.25, penaltyPerMetre: 55 },
-  wind: { comfort: 13, penaltyPerKmh: 2.2 },
-  gusts: { comfort: 22, penaltyPerKmh: 1.5 },
-  rain: { comfort: 35, penaltyPerPercent: 0.35, elevated: 50 },
-  waterTemp: { comfort: 10, penaltyPerDegree: 3.5, cold: 11 },
-  weather: { showersPenalty: 8 },
-  tide: { defaultPenalty: 10, midPenaltyScale: 14, fallingMidTidePenalty: 4 },
+  wave: { comfort: 0.3, penaltyPerMetre: 120, rough: 0.65 },
+  swell: { comfort: 0.25, penaltyPerMetre: 70 },
+  wind: { comfort: 14, penaltyPerKmh: 1.6 },
+  gusts: { comfort: 24, penaltyPerKmh: 1.1 },
+  rain: { comfort: 30, penaltyPerPercent: 0.55, heavy: 70, heavyPenalty: 12, elevated: 50 },
+  waterTemp: { comfort: 9, penaltyPerDegree: 1.6, cold: 11 },
+  weather: { showersPenalty: 7, visibilityPenalty: 7 },
+  tide: { highPreferencePenalty: 34, lowCritical: 0.22, lowExtraPenalty: 16, midPenaltyScale: 24, fallingMidTidePenalty: 6 },
+  murkiness: { penalty: 12, warningWaveHeight: 0.38 },
 };
 
 export function windExposure(degrees) {
@@ -32,8 +33,9 @@ export function tidePenalty(hour, preferences) {
     const midPenalty = Math.abs(hour.tideFullness - 0.55) * SCORE_RULES.tide.midPenaltyScale;
     return hour.tideTrend === "falling" ? midPenalty + SCORE_RULES.tide.fallingMidTidePenalty : midPenalty;
   }
-  if (preferred === "Low tide") return hour.tideFullness * SCORE_RULES.tide.defaultPenalty;
-  return (1 - hour.tideFullness) * SCORE_RULES.tide.defaultPenalty;
+  if (preferred === "Low tide") return hour.tideFullness * SCORE_RULES.tide.highPreferencePenalty;
+  const lowPenalty = (1 - hour.tideFullness) * SCORE_RULES.tide.highPreferencePenalty;
+  return hour.tideFullness <= SCORE_RULES.tide.lowCritical ? lowPenalty + SCORE_RULES.tide.lowExtraPenalty : lowPenalty;
 }
 
 function penalty(amount, reason, penalties) {
@@ -59,6 +61,9 @@ export function scoreBreakdown(hour, preferences = DEFAULT_PREFERENCES) {
   score -= penalty(Math.max(0, hour.windSpeed - rules.wind.comfort) * rules.wind.penaltyPerKmh * exposure.multiplier, exposure.label, penalties);
   score -= penalty(Math.max(0, hour.gusts - rules.gusts.comfort) * rules.gusts.penaltyPerKmh * exposure.multiplier, "gusts are elevated", penalties);
   score -= penalty(Math.max(0, hour.rainRisk - rules.rain.comfort) * rules.rain.penaltyPerPercent, "rain risk is elevated", penalties);
+  score -= penalty(hour.rainRisk >= rules.rain.heavy ? rules.rain.heavyPenalty : 0, "heavy rain risk", penalties);
+  score -= penalty(hour.murkinessRisk ? rules.murkiness.penalty : 0, "water may be murky", penalties);
+  score -= penalty(hour.weatherCode === 45 || hour.weatherCode === 48 ? rules.weather.visibilityPenalty : 0, "visibility may be reduced", penalties);
   score -= penalty(Math.max(0, rules.waterTemp.comfort - hour.waterTemp) * rules.waterTemp.penaltyPerDegree, "cold water needs proper kit", penalties);
   score -= penalty(tidePenalty(hour, preferences), "less preferred tide state", penalties);
   score -= penalty(hour.weatherCode >= 80 ? rules.weather.showersPenalty : 0, "showery weather", penalties);
@@ -98,10 +103,30 @@ export function scoreAdvice(score, hour) {
   if (hour.waveHeight <= 0.35) bits.push("low wave height");
   if (hour.windSpeed <= 13) bits.push("lighter wind");
   if (hour.rainRisk >= SCORE_RULES.rain.elevated) bits.push("rain risk is elevated");
+  if (hour.murkinessRisk) bits.push("water may be murky");
   if (hour.waveHeight > SCORE_RULES.wave.rough) bits.push("waves look choppy");
   if (hour.waterTemp < SCORE_RULES.waterTemp.cold) bits.push("cold water needs proper kit");
   if (!bits.length) bits.push("conditions are balanced rather than exceptional");
   return bits.join(", ");
+}
+
+function exposedWindForMurkiness(degrees) {
+  if (!Number.isFinite(degrees)) return false;
+  const normalised = (degrees + 360) % 360;
+  return normalised >= 315 || normalised <= 135;
+}
+
+function annotateMurkiness(hours) {
+  hours.forEach((hour, index) => {
+    const recent = hours.slice(Math.max(0, index - 24), index + 1);
+    const exposedChopHours = recent.filter(
+      (item) =>
+        exposedWindForMurkiness(item.windDirection) &&
+        ((Number.isFinite(item.waveHeight) && item.waveHeight >= SCORE_RULES.murkiness.warningWaveHeight) ||
+          (Number.isFinite(item.windSpeed) && item.windSpeed >= 18))
+    ).length;
+    hour.murkinessRisk = exposedChopHours >= 3;
+  });
 }
 
 export function formatHighTideDelta(minutes) {
@@ -201,6 +226,7 @@ export function combineHours(weather, marine, preferences) {
     };
   });
   annotateTides(hours);
+  annotateMurkiness(hours);
   hours.forEach((hour) => {
     hour.score = conditionScore(hour, preferences);
   });

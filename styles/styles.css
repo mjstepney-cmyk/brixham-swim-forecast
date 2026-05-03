@@ -101,6 +101,40 @@ h2 {
   transform: translateX(-50%);
 }
 
+.visual-return-button {
+  position: absolute;
+  z-index: 7;
+  right: 14px;
+  bottom: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: rgba(6, 28, 34, 0.62);
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 850;
+  backdrop-filter: blur(8px);
+}
+
+.murky-notice {
+  position: absolute;
+  z-index: 7;
+  left: 14px;
+  right: 14px;
+  bottom: 82px;
+  border: 1px solid rgba(255, 213, 106, 0.52);
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: rgba(6, 28, 34, 0.64);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+}
+
 .score-badge span {
   display: block;
   font-size: 2rem;

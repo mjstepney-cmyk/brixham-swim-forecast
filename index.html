@@ -25,9 +25,9 @@
 
       <section class="beach-visual" aria-label="Pictorial beach conditions">
         <div class="visual-title">
-          <h2>Current conditions</h2>
+          <h2 id="visualTitle">Current conditions</h2>
           <p>
-            Breakwater Beach now
+            <span id="visualSubtitle">Breakwater Beach now</span>
             <a class="text-link inline-link" href="https://camsecure.co.uk/brixham_breakwater.html" target="_blank" rel="noopener">View webcam</a>
           </p>
         </div>
@@ -41,6 +41,7 @@
             <span>--</span>
             <small>score</small>
           </div>
+          <button id="visualReturnButton" class="visual-return-button" type="button" hidden>Return to current</button>
 
           <div class="conditions-overlay">
             <div class="temp-stack">
@@ -96,6 +97,7 @@
               <strong id="visualFeels">--</strong>
             </div>
           </div>
+          <div id="murkyNotice" class="murky-notice" hidden>Water may be murky after recent exposed wind and chop.</div>
           <p class="imagery-credit">Imagery: Esri World Imagery</p>
         </div>
       </section>

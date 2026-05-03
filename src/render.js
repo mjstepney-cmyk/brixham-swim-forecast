@@ -57,9 +57,9 @@ function tideSummary(hour) {
 }
 
 function tideArrow(hour) {
-  if (hour?.tideTrend === "rising") return "↑";
-  if (hour?.tideTrend === "falling") return "↓";
-  return "→";
+  if (hour?.tideTrend === "rising") return "\u2191";
+  if (hour?.tideTrend === "falling") return "\u2193";
+  return "\u2192";
 }
 
 function timeText(time) {
@@ -148,6 +148,21 @@ function renderVisualTideReadout(hour) {
   $("visualTide").textContent = tideSummary(hour);
 }
 
+function setVisualMode(mode, hour = null) {
+  const isFuture = mode === "future" && hour;
+  $("visualTitle").textContent = isFuture ? "Forecast conditions" : "Current conditions";
+  $("visualSubtitle").textContent = isFuture
+    ? new Date(hour.time).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })
+    : "Breakwater Beach now";
+  $("visualReturnButton").hidden = !isFuture;
+}
+
+function renderMurkinessNotice(hour) {
+  const notice = $("murkyNotice");
+  if (!notice) return;
+  notice.hidden = !hour?.murkinessRisk;
+}
+
 export function setRefreshState(state) {
   const button = $("refreshButton");
   if (!button) return;
@@ -193,6 +208,7 @@ function renderBeachVisual(nowWeather, nowMarine, hours, current) {
   $("visualWave").textContent = fmt(nowMarine.wave_height, " m", 1);
   $("waveStatus").className = `wave-status ${waveClass(nowMarine.wave_height)}`;
   renderVisualTideReadout(current);
+  renderMurkinessNotice(current);
   $("visualTemp").textContent = fmt(nowMarine.sea_surface_temperature, " deg C", 1);
   $("visualAirTemp").textContent = fmt(nowWeather.temperature_2m, " deg C", 1);
   $("visualWeatherIcon").className = `weather-symbol ${weatherIcon(nowWeather.weather_code)}`;
@@ -236,10 +252,11 @@ function selectForecastHour(time) {
   $("summaryCard").innerHTML = `
     <p class="status-label">${scoreLabel(selected.score)}</p>
     <h2>${date.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}, ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}. ${scoreAdvice(selected.score, selected)}.</h2>
-    <p class="muted">Forecast selection shown in the beach panel and current-condition readouts below.</p>
+    <p class="muted">Forecast selection shown in the beach panel.</p>
     <button id="returnCurrentButton" class="text-button" type="button">Return to current</button>
   `;
   renderBeachVisual(weatherFromHour(selected), marineFromHour(selected), forecastHours, selected);
+  setVisualMode("future", selected);
   $("returnCurrentButton").addEventListener("click", () => {
     if (currentSnapshot) renderCurrent(currentSnapshot.weather, currentSnapshot.marine, currentSnapshot.hours, currentSnapshot.meta);
   });
@@ -265,6 +282,7 @@ export function renderCurrent(weather, marine, hours, meta = {}) {
     minute: "2-digit",
   })}`;
   renderBeachVisual(nowWeather, nowMarine, hours, current);
+  setVisualMode("current");
   document.querySelectorAll("[data-forecast-time]").forEach((card) => {
     card.classList.remove("selected");
   });
@@ -295,6 +313,8 @@ export function renderWeatherOnly(weather, meta = {}) {
   $("visualWave").textContent = "--";
   $("visualTide").textContent = "--";
   $("visualTideArrow").textContent = "-";
+  $("murkyNotice").hidden = true;
+  setVisualMode("current");
   $("visualTemp").textContent = "--";
   $("windowsList").innerHTML = `<article class="window"><div><strong>Swim windows paused</strong><small>Marine wave and tide data is needed before ranking swim windows.</small></div><span class="pill watch">--</span></article>`;
   $("dailyList").innerHTML = `<article class="day"><div><strong>Outlook paused</strong><small>Weather is available, but marine data is needed for safe swim scoring.</small></div><span class="pill watch">--</span></article>`;
@@ -346,6 +366,11 @@ export function renderDaily(hours) {
 }
 
 export function bindForecastCards() {
+  const visualReturnButton = $("visualReturnButton");
+  if (visualReturnButton) visualReturnButton.onclick = () => {
+    if (currentSnapshot) renderCurrent(currentSnapshot.weather, currentSnapshot.marine, currentSnapshot.hours, currentSnapshot.meta);
+  };
+
   document.querySelectorAll("[data-forecast-time]").forEach((card) => {
     card.addEventListener("click", (event) => {
       if (event.target.closest(".details-button")) {
