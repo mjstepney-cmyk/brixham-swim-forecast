@@ -625,21 +625,55 @@ h2 {
   stroke-width: 4;
 }
 
+.tide-guide {
+  stroke: rgba(63, 106, 113, 0.22);
+  stroke-dasharray: 4 5;
+  stroke-width: 1.4;
+}
+
 .tide-point circle {
   fill: #ffffff;
   stroke: var(--teal);
   stroke-width: 3;
 }
 
-.tide-point text {
-  fill: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 850;
+.tide-event-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tide-event-chip {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  border: 1px solid rgba(63, 106, 113, 0.18);
+  border-radius: 8px;
+  background: rgba(241, 249, 247, 0.82);
+  padding: 8px 10px;
+}
+
+.tide-event-chip strong {
+  color: var(--teal-dark);
+  font-size: 0.78rem;
+}
+
+.tide-event-chip span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.tide-event-chip b {
+  color: var(--ink);
+  font-size: 0.98rem;
+  line-height: 1.1;
 }
 
 .tide-curve-card small {
   display: block;
-  margin-top: 6px;
+  margin-top: 10px;
   color: var(--muted);
 }
 

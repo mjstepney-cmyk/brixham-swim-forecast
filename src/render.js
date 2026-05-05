@@ -366,9 +366,9 @@ export function renderTideCurve(hours) {
   }
 
   const width = 640;
-  const height = 180;
-  const paddingX = 34;
-  const paddingY = 28;
+  const height = 150;
+  const paddingX = 38;
+  const paddingY = 26;
   const start = new Date(events[0].time).getTime();
   const end = start + 48 * 60 * 60 * 1000;
   const points = events.map((event) => {
@@ -381,21 +381,40 @@ export function renderTideCurve(hours) {
   container.innerHTML = `
     <article class="tide-curve-card">
       <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="UKHO tide curve for the next 48 hours">
+        ${points
+          .map(
+            (point) => `
+              <line class="tide-guide" x1="${point.x.toFixed(1)}" y1="${point.y.toFixed(1)}" x2="${point.x.toFixed(
+                1
+              )}" y2="${height - 12}" />
+            `
+          )
+          .join("")}
         <path class="tide-curve-line" d="${tideCurvePath(points)}" />
         ${points
           .map(
             (point) => `
               <g class="tide-point">
                 <circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="5" />
-                <text x="${point.x.toFixed(1)}" y="${point.type === "High" ? point.y + 20 : point.y - 12}" text-anchor="middle">
-                  ${point.type} ${timeText(point.time)}
-                </text>
               </g>
             `
           )
           .join("")}
       </svg>
-      <small>UKHO tide events from ${dateText(events[0].time)} ${timeText(events[0].time)}.</small>
+      <div class="tide-event-row">
+        ${points
+          .map(
+            (point) => `
+              <div class="tide-event-chip">
+                <strong>${point.type}</strong>
+                <span>${dateText(point.time)}</span>
+                <b>${timeText(point.time)}</b>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+      <small>UKHO tide events from the next tide turn, looking ahead 48 hours.</small>
     </article>
   `;
 }
