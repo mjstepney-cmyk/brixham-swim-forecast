@@ -116,6 +116,10 @@ function tideCurvePath(points) {
   return path;
 }
 
+function tideLabelDay(time) {
+  return new Date(time).toLocaleDateString("en-GB", { weekday: "short" });
+}
+
 function tideBlock(events) {
   return `
     <div class="tide-times tide-times-top">
@@ -359,22 +363,24 @@ export function renderWindows(hours) {
 export function renderTideCurve(hours) {
   const container = $("tideCurve");
   if (!container) return;
-  const events = tideCurveEvents(hours);
+  const events = tideCurveEvents(hours).slice(0, 5);
   if (events.length < 2) {
     container.innerHTML = `<article class="tide-curve-card"><strong>Tide curve unavailable</strong><small>UKHO tide events are needed for the forward curve.</small></article>`;
     return;
   }
 
   const width = 640;
-  const height = 150;
+  const height = 238;
   const paddingX = 38;
   const paddingY = 26;
+  const chartBottom = 132;
+  const labelTop = 158;
   const start = new Date(events[0].time).getTime();
   const end = start + 48 * 60 * 60 * 1000;
   const points = events.map((event) => {
     const time = new Date(event.time).getTime();
     const x = paddingX + ((time - start) / (end - start)) * (width - paddingX * 2);
-    const y = event.type === "High" ? paddingY : height - paddingY;
+    const y = event.type === "High" ? paddingY : chartBottom;
     return { ...event, x, y };
   });
 
@@ -386,7 +392,7 @@ export function renderTideCurve(hours) {
             (point) => `
               <line class="tide-guide" x1="${point.x.toFixed(1)}" y1="${point.y.toFixed(1)}" x2="${point.x.toFixed(
                 1
-              )}" y2="${height - 12}" />
+              )}" y2="${labelTop - 8}" />
             `
           )
           .join("")}
@@ -400,21 +406,20 @@ export function renderTideCurve(hours) {
             `
           )
           .join("")}
-      </svg>
-      <div class="tide-event-row">
         ${points
           .map(
             (point) => `
-              <div class="tide-event-chip">
-                <strong>${point.type}</strong>
-                <span>${dateText(point.time)}</span>
-                <b>${timeText(point.time)}</b>
-              </div>
+              <g class="tide-label" transform="translate(${point.x.toFixed(1)} ${labelTop})">
+                <rect x="-40" y="0" width="80" height="58" rx="8" />
+                <text class="tide-label-type" x="0" y="17" text-anchor="middle">${point.type}</text>
+                <text class="tide-label-day" x="0" y="34" text-anchor="middle">${tideLabelDay(point.time)}</text>
+                <text class="tide-label-time" x="0" y="52" text-anchor="middle">${timeText(point.time)}</text>
+              </g>
             `
           )
           .join("")}
-      </div>
-      <small>UKHO tide events from the next tide turn, looking ahead 48 hours.</small>
+      </svg>
+      <small>First tide turns from ${dateText(events[0].time)}.</small>
     </article>
   `;
 }

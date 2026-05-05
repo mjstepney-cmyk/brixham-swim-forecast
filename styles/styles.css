@@ -627,8 +627,7 @@ h2 {
 
 .tide-guide {
   stroke: rgba(63, 106, 113, 0.22);
-  stroke-dasharray: 4 5;
-  stroke-width: 1.4;
+  stroke-width: 1.6;
 }
 
 .tide-point circle {
@@ -637,38 +636,31 @@ h2 {
   stroke-width: 3;
 }
 
-.tide-event-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
-  gap: 8px;
-  margin-top: 8px;
+.tide-label rect {
+  fill: rgba(241, 249, 247, 0.94);
+  stroke: rgba(63, 106, 113, 0.2);
 }
 
-.tide-event-chip {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-  border: 1px solid rgba(63, 106, 113, 0.18);
-  border-radius: 8px;
-  background: rgba(241, 249, 247, 0.82);
-  padding: 8px 10px;
+.tide-label text {
+  letter-spacing: 0;
 }
 
-.tide-event-chip strong {
-  color: var(--teal-dark);
-  font-size: 0.78rem;
-}
-
-.tide-event-chip span {
-  color: var(--muted);
+.tide-label-type {
+  fill: var(--teal-dark);
   font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.tide-label-day {
+  fill: var(--muted);
+  font-size: 0.66rem;
   font-weight: 800;
 }
 
-.tide-event-chip b {
-  color: var(--ink);
-  font-size: 0.98rem;
-  line-height: 1.1;
+.tide-label-time {
+  fill: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 900;
 }
 
 .tide-curve-card small {
