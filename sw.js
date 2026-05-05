@@ -1,4 +1,4 @@
-const CACHE_NAME = "brixham-swim-forecast-v3";
+const CACHE_NAME = "brixham-swim-forecast-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
