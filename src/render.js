@@ -93,6 +93,29 @@ function tideEventText(events) {
     .join(" · ");
 }
 
+function tideCurveEvents(hours) {
+  const events = hours.find((hour) => hour.ukhoEvents?.length)?.ukhoEvents || [];
+  const next = events.find((event) => new Date(event.time).getTime() >= Date.now());
+  if (!next) return [];
+  const end = new Date(next.time).getTime() + 48 * 60 * 60 * 1000;
+  return events.filter((event) => {
+    const time = new Date(event.time).getTime();
+    return time >= new Date(next.time).getTime() && time <= end;
+  });
+}
+
+function tideCurvePath(points) {
+  if (points.length < 2) return "";
+  const [first, ...rest] = points;
+  let path = `M ${first.x.toFixed(1)} ${first.y.toFixed(1)}`;
+  rest.forEach((point, index) => {
+    const previous = points[index];
+    const middle = (previous.x + point.x) / 2;
+    path += ` C ${middle.toFixed(1)} ${previous.y.toFixed(1)}, ${middle.toFixed(1)} ${point.y.toFixed(1)}, ${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
+  });
+  return path;
+}
+
 function tideBlock(events) {
   return `
     <div class="tide-times tide-times-top">
@@ -331,6 +354,50 @@ export function renderWindows(hours) {
         })
         .join("")
     : `<article class="window"><div><strong>No clear grouped windows in the next 48 hours</strong><small>Conditions may still be usable locally; the model did not find a stronger daylight period.</small></div><span class="pill watch">--</span></article>`;
+}
+
+export function renderTideCurve(hours) {
+  const container = $("tideCurve");
+  if (!container) return;
+  const events = tideCurveEvents(hours);
+  if (events.length < 2) {
+    container.innerHTML = `<article class="tide-curve-card"><strong>Tide curve unavailable</strong><small>UKHO tide events are needed for the forward curve.</small></article>`;
+    return;
+  }
+
+  const width = 640;
+  const height = 180;
+  const paddingX = 34;
+  const paddingY = 28;
+  const start = new Date(events[0].time).getTime();
+  const end = start + 48 * 60 * 60 * 1000;
+  const points = events.map((event) => {
+    const time = new Date(event.time).getTime();
+    const x = paddingX + ((time - start) / (end - start)) * (width - paddingX * 2);
+    const y = event.type === "High" ? paddingY : height - paddingY;
+    return { ...event, x, y };
+  });
+
+  container.innerHTML = `
+    <article class="tide-curve-card">
+      <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="UKHO tide curve for the next 48 hours">
+        <path class="tide-curve-line" d="${tideCurvePath(points)}" />
+        ${points
+          .map(
+            (point) => `
+              <g class="tide-point">
+                <circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="5" />
+                <text x="${point.x.toFixed(1)}" y="${point.type === "High" ? point.y + 20 : point.y - 12}" text-anchor="middle">
+                  ${point.type} ${timeText(point.time)}
+                </text>
+              </g>
+            `
+          )
+          .join("")}
+      </svg>
+      <small>UKHO tide events from ${dateText(events[0].time)} ${timeText(events[0].time)}.</small>
+    </article>
+  `;
 }
 
 export function renderDaily(hours) {

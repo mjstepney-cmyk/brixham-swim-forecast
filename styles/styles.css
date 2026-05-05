@@ -604,6 +604,45 @@ h2 {
   gap: 10px;
 }
 
+.tide-curve-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 30px rgba(16, 36, 42, 0.06);
+  padding: 14px;
+}
+
+.tide-curve-card svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tide-curve-line {
+  fill: none;
+  stroke: var(--teal);
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.tide-point circle {
+  fill: #ffffff;
+  stroke: var(--teal);
+  stroke-width: 3;
+}
+
+.tide-point text {
+  fill: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.tide-curve-card small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+}
+
 .window,
 .day {
   display: grid;

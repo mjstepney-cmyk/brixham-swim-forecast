@@ -9,6 +9,7 @@ import {
   renderError,
   renderQuality,
   setRefreshState,
+  renderTideCurve,
   renderWeatherOnly,
   renderWindows,
   setForecastHours,
@@ -61,6 +62,7 @@ async function boot(options = {}) {
     renderCurrent(weather, marine, hours, {
       cachedAt: weatherResult.value.cachedAt || marineResult.value.cachedAt,
     });
+    renderTideCurve(hours);
     renderWindows(hours);
     renderDaily(hours);
     bindForecastCards();
