@@ -376,7 +376,7 @@ export function renderTideCurve(hours) {
   const chartBottom = 132;
   const labelTop = 158;
   const start = new Date(events[0].time).getTime();
-  const end = start + 48 * 60 * 60 * 1000;
+  const end = new Date(events[events.length - 1].time).getTime();
   const points = events.map((event) => {
     const time = new Date(event.time).getTime();
     const x = paddingX + ((time - start) / (end - start)) * (width - paddingX * 2);
