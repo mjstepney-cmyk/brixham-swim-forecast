@@ -1,251 +1,251 @@
 {
   "source": "UKHO ADMIRALTY Tidal API",
   "stationId": "0025",
-  "generatedAt": "2026-05-05T07:27:34.413Z",
+  "generatedAt": "2026-05-16T07:26:34.736Z",
   "rawShape": "array",
   "events": [
     {
-      "EventType": "LowWater",
-      "DateTime": "2026-05-05T01:30:27",
+      "EventType": "HighWater",
+      "DateTime": "2026-05-16T05:28:03",
       "IsApproximateTime": false,
-      "Height": 1.299361027976701,
+      "Height": 4.816649294078731,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-05T00:00:00"
+      "Date": "2026-05-16T00:00:00"
+    },
+    {
+      "EventType": "LowWater",
+      "DateTime": "2026-05-16T11:20:40.45",
+      "IsApproximateTime": false,
+      "Height": 0.8653300626554918,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-05-16T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-05T08:00:02.783",
+      "DateTime": "2026-05-16T17:51:39",
       "IsApproximateTime": false,
-      "Height": 4.449058671518283,
+      "Height": 4.877711185326705,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-05T00:00:00"
+      "Date": "2026-05-16T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-05T13:40:57",
+      "DateTime": "2026-05-16T23:43:48.85",
       "IsApproximateTime": false,
-      "Height": 1.4452813996406995,
+      "Height": 0.8242473978240893,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-05T00:00:00"
+      "Date": "2026-05-16T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-05T20:11:10.667",
+      "DateTime": "2026-05-17T06:17:13",
       "IsApproximateTime": false,
-      "Height": 4.587937357062413,
+      "Height": 4.904413687881097,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-05T00:00:00"
+      "Date": "2026-05-17T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-06T01:55:39",
+      "DateTime": "2026-05-17T12:05:59.467",
       "IsApproximateTime": false,
-      "Height": 1.4803256007790448,
+      "Height": 0.7817236461346126,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-06T00:00:00"
+      "Date": "2026-05-17T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-06T08:31:25",
+      "DateTime": "2026-05-17T18:38:05.6",
       "IsApproximateTime": false,
-      "Height": 4.278921138131064,
+      "Height": 4.998034766136168,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-06T00:00:00"
+      "Date": "2026-05-17T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-06T14:04:03",
+      "DateTime": "2026-05-18T00:28:10.4",
       "IsApproximateTime": false,
-      "Height": 1.6363205903893947,
+      "Height": 0.730350553840162,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-06T00:00:00"
+      "Date": "2026-05-18T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-06T20:42:32.883",
+      "DateTime": "2026-05-18T07:07:25.9",
       "IsApproximateTime": false,
-      "Height": 4.439466238159408,
+      "Height": 4.911463529150748,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-06T00:00:00"
+      "Date": "2026-05-18T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-07T02:22:57",
+      "DateTime": "2026-05-18T12:49:23.467",
       "IsApproximateTime": false,
-      "Height": 1.6664334870991357,
+      "Height": 0.798618190443681,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-07T00:00:00"
+      "Date": "2026-05-18T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-07T09:05:49.367",
+      "DateTime": "2026-05-18T19:25:38.5",
       "IsApproximateTime": false,
-      "Height": 4.083331294883456,
+      "Height": 5.037971641023503,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-07T00:00:00"
+      "Date": "2026-05-18T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-07T14:31:21",
+      "DateTime": "2026-05-19T01:13:39",
       "IsApproximateTime": false,
-      "Height": 1.8315440334645356,
+      "Height": 0.7480025092725575,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-07T00:00:00"
+      "Date": "2026-05-19T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-07T21:16:57.25",
+      "DateTime": "2026-05-19T07:57:00.633",
       "IsApproximateTime": false,
-      "Height": 4.265520961124459,
+      "Height": 4.830219360554881,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-07T00:00:00"
+      "Date": "2026-05-19T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-08T02:56:33",
+      "DateTime": "2026-05-19T13:36:45",
       "IsApproximateTime": false,
-      "Height": 1.8583335113219965,
+      "Height": 0.9156239899249421,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-08T00:00:00"
+      "Date": "2026-05-19T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-08T09:47:18.75",
+      "DateTime": "2026-05-19T20:11:10.667",
       "IsApproximateTime": false,
-      "Height": 3.8822095479628724,
+      "Height": 4.985898290402971,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-08T00:00:00"
+      "Date": "2026-05-19T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-08T15:10:12",
+      "DateTime": "2026-05-20T02:01:57",
       "IsApproximateTime": false,
-      "Height": 2.037919272806449,
+      "Height": 0.873213326981999,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-08T00:00:00"
+      "Date": "2026-05-20T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-08T22:00:28.067",
+      "DateTime": "2026-05-20T08:46:35.75",
       "IsApproximateTime": false,
-      "Height": 4.086899220737705,
+      "Height": 4.6659946965856225,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-08T00:00:00"
+      "Date": "2026-05-20T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-09T03:48:00",
+      "DateTime": "2026-05-20T14:24:00",
       "IsApproximateTime": false,
-      "Height": 2.048487210622949,
+      "Height": 1.1164583749987118,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-09T00:00:00"
+      "Date": "2026-05-20T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-09T10:39:56.017",
+      "DateTime": "2026-05-20T20:58:44.35",
       "IsApproximateTime": false,
-      "Height": 3.711684556123731,
+      "Height": 4.84505834773843,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-09T00:00:00"
+      "Date": "2026-05-20T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-09T16:09:00",
+      "DateTime": "2026-05-21T02:52:21",
       "IsApproximateTime": false,
-      "Height": 2.235108103677145,
+      "Height": 1.0846662406963747,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-09T00:00:00"
+      "Date": "2026-05-21T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-09T22:56:07.483",
+      "DateTime": "2026-05-21T09:38:12.3",
       "IsApproximateTime": false,
-      "Height": 3.9433478238921973,
+      "Height": 4.440356495516429,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-09T00:00:00"
+      "Date": "2026-05-21T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-10T05:09:54",
+      "DateTime": "2026-05-21T15:14:24",
       "IsApproximateTime": false,
-      "Height": 2.1680018987719216,
+      "Height": 1.3710356200888258,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-10T00:00:00"
+      "Date": "2026-05-21T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-10T11:46:43.317",
+      "DateTime": "2026-05-21T21:48:19.467",
       "IsApproximateTime": false,
-      "Height": 3.631457225673887,
+      "Height": 4.635329557160042,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-10T00:00:00"
+      "Date": "2026-05-21T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-10T17:43:30",
+      "DateTime": "2026-05-22T03:45:54",
       "IsApproximateTime": false,
-      "Height": 2.320216261234414,
+      "Height": 1.3398972989946987,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-10T00:00:00"
+      "Date": "2026-05-22T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-11T00:05:56.933",
+      "DateTime": "2026-05-22T10:35:53.15",
       "IsApproximateTime": false,
-      "Height": 3.8952391705352785,
+      "Height": 4.198443745443321,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-11T00:00:00"
+      "Date": "2026-05-22T00:00:00"
     },
     {
       "EventType": "LowWater",
-      "DateTime": "2026-05-11T06:37:10.55",
+      "DateTime": "2026-05-22T16:09:00",
       "IsApproximateTime": false,
-      "Height": 2.099326552565784,
+      "Height": 1.6332006662890883,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-11T00:00:00"
+      "Date": "2026-05-22T00:00:00"
     },
     {
       "EventType": "HighWater",
-      "DateTime": "2026-05-11T13:07:40.65",
+      "DateTime": "2026-05-22T22:44:59.6",
       "IsApproximateTime": false,
-      "Height": 3.7011540036535324,
+      "Height": 4.4012552009915975,
       "IsApproximateHeight": false,
       "Filtered": false,
-      "Date": "2026-05-11T00:00:00"
-    },
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-05-11T19:07:03.9",
-      "IsApproximateTime": false,
-      "Height": 2.1926485857289926,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-05-11T00:00:00"
+      "Date": "2026-05-22T00:00:00"
     }
   ]
 }
