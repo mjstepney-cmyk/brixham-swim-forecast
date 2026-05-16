@@ -99,15 +99,18 @@ export function scoreLabel(score) {
 
 export function scoreAdvice(score, hour) {
   const bits = [];
-  if (hour.scoreReason) bits.push(hour.scoreReason);
-  if (hour.waveHeight <= 0.35) bits.push("low wave height");
-  if (hour.windSpeed <= 13) bits.push("lighter wind");
-  if (hour.rainRisk >= SCORE_RULES.rain.elevated) bits.push("rain risk is elevated");
-  if (hour.murkinessRisk) bits.push("water may be murky");
-  if (hour.waveHeight > SCORE_RULES.wave.rough) bits.push("waves look choppy");
-  if (hour.waterTemp < SCORE_RULES.waterTemp.cold) bits.push("cold water needs proper kit");
-  if (!bits.length) bits.push("conditions are balanced rather than exceptional");
-  return [...new Set(bits)].join(", ");
+  const addBit = (bit) => {
+    if (!bits.some((existing) => existing.includes(bit) || bit.includes(existing))) bits.push(bit);
+  };
+  if (hour.scoreReason) addBit(hour.scoreReason);
+  if (hour.waveHeight <= 0.35) addBit("low wave height");
+  if (hour.windSpeed <= 13) addBit("lighter wind");
+  if (hour.rainRisk >= SCORE_RULES.rain.elevated) addBit("rain risk is elevated");
+  if (hour.murkinessRisk) addBit("water may be murky");
+  if (hour.waveHeight > SCORE_RULES.wave.rough) addBit("waves look choppy");
+  if (hour.waterTemp < SCORE_RULES.waterTemp.cold) addBit("cold water needs proper kit");
+  if (!bits.length) addBit("conditions are balanced rather than exceptional");
+  return bits.join(", ");
 }
 
 function exposedWindForMurkiness(degrees) {
