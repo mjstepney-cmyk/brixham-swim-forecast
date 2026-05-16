@@ -201,10 +201,10 @@ export function renderQuality(quality) {
     <h2>Water quality</h2>
     <p><strong>${quality.label}</strong></p>
     <p>${quality.detail}</p>
-    <p class="quality-meta">EA feed checked ${checked}. Also check WaterFit/SAS if recent rain or overflow risk matters today.</p>
+    <p class="quality-meta">EA feed checked ${checked}. Check EA Swimfo for weekly sample results and WaterFit for recent overflow risk.</p>
     <p>
       <a class="text-link" href="https://www.southwestwater.co.uk/breakwater-shoalstone" target="_blank" rel="noopener">Open WaterFit Live</a>
-      <a class="text-link quality-link" href="https://datahq.sas.org.uk/sewage-data-hq/is-it-safe-to-swim/" target="_blank" rel="noopener">Open SAS alerts</a>
+      <a class="text-link quality-link" href="https://environment.data.gov.uk/bwq/profiles/profile.html?_search=Shoal&site=ukk4200-24500" target="_blank" rel="noopener">Open EA Swimfo results</a>
     </p>
   `;
 }
