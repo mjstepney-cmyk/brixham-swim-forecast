@@ -107,7 +107,7 @@ export function scoreAdvice(score, hour) {
   if (hour.waveHeight > SCORE_RULES.wave.rough) bits.push("waves look choppy");
   if (hour.waterTemp < SCORE_RULES.waterTemp.cold) bits.push("cold water needs proper kit");
   if (!bits.length) bits.push("conditions are balanced rather than exceptional");
-  return bits.join(", ");
+  return [...new Set(bits)].join(", ");
 }
 
 function exposedWindForMurkiness(degrees) {
