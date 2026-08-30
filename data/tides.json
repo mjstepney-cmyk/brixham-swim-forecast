@@ -1,45 +1,9 @@
 {
   "source": "UKHO ADMIRALTY Tidal API",
   "stationId": "0025",
-  "generatedAt": "2026-08-29T11:40:28.200Z",
+  "generatedAt": "2026-08-30T10:29:29.309Z",
   "rawShape": "array",
   "events": [
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-08-29T00:21:25.333",
-      "IsApproximateTime": false,
-      "Height": 1.0399814101294071,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-08-29T00:00:00"
-    },
-    {
-      "EventType": "HighWater",
-      "DateTime": "2026-08-29T06:58:19.6",
-      "IsApproximateTime": false,
-      "Height": 4.662822053101067,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-08-29T00:00:00"
-    },
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-08-29T12:35:53.333",
-      "IsApproximateTime": false,
-      "Height": 1.0752839528417026,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-08-29T00:00:00"
-    },
-    {
-      "EventType": "HighWater",
-      "DateTime": "2026-08-29T19:09:27.3",
-      "IsApproximateTime": false,
-      "Height": 4.9118392738180106,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-08-29T00:00:00"
-    },
     {
       "EventType": "LowWater",
       "DateTime": "2026-08-30T00:54:12.8",
@@ -255,6 +219,33 @@
       "IsApproximateHeight": false,
       "Filtered": false,
       "Date": "2026-09-04T00:00:00"
+    },
+    {
+      "EventType": "LowWater",
+      "DateTime": "2026-09-05T04:51:00",
+      "IsApproximateTime": false,
+      "Height": 2.0971853550393176,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-09-05T00:00:00"
+    },
+    {
+      "EventType": "HighWater",
+      "DateTime": "2026-09-05T11:44:41.883",
+      "IsApproximateTime": false,
+      "Height": 3.96594207584219,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-09-05T00:00:00"
+    },
+    {
+      "EventType": "LowWater",
+      "DateTime": "2026-09-05T17:37:12",
+      "IsApproximateTime": false,
+      "Height": 2.236833711574807,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-09-05T00:00:00"
     }
   ]
 }
