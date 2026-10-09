@@ -1,45 +1,9 @@
 {
   "source": "UKHO ADMIRALTY Tidal API",
   "stationId": "0025",
-  "generatedAt": "2026-10-08T12:03:28.967Z",
+  "generatedAt": "2026-10-09T11:55:24.872Z",
   "rawShape": "array",
   "events": [
-    {
-      "EventType": "HighWater",
-      "DateTime": "2026-10-08T04:28:04",
-      "IsApproximateTime": false,
-      "Height": 4.535761592181544,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-10-08T00:00:00"
-    },
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-10-08T10:11:14.333",
-      "IsApproximateTime": false,
-      "Height": 1.32031613501738,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-10-08T00:00:00"
-    },
-    {
-      "EventType": "HighWater",
-      "DateTime": "2026-10-08T16:38:53",
-      "IsApproximateTime": false,
-      "Height": 4.875457402990422,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-10-08T00:00:00"
-    },
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-10-08T22:36:18.867",
-      "IsApproximateTime": false,
-      "Height": 1.0103306209630183,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-10-08T00:00:00"
-    },
     {
       "EventType": "HighWater",
       "DateTime": "2026-10-09T05:10:21",
@@ -246,6 +210,42 @@
       "IsApproximateHeight": false,
       "Filtered": false,
       "Date": "2026-10-14T00:00:00"
+    },
+    {
+      "EventType": "LowWater",
+      "DateTime": "2026-10-15T01:55:39",
+      "IsApproximateTime": false,
+      "Height": 1.438144334192962,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-10-15T00:00:00"
+    },
+    {
+      "EventType": "HighWater",
+      "DateTime": "2026-10-15T08:20:17.117",
+      "IsApproximateTime": false,
+      "Height": 4.712861702541636,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-10-15T00:00:00"
+    },
+    {
+      "EventType": "LowWater",
+      "DateTime": "2026-10-15T14:10:21",
+      "IsApproximateTime": false,
+      "Height": 1.5513317803766968,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-10-15T00:00:00"
+    },
+    {
+      "EventType": "HighWater",
+      "DateTime": "2026-10-15T20:33:26.433",
+      "IsApproximateTime": false,
+      "Height": 4.469400860891157,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-10-15T00:00:00"
     }
   ]
 }
