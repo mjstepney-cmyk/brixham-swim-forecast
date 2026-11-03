@@ -1,36 +1,9 @@
 {
   "source": "UKHO ADMIRALTY Tidal API",
   "stationId": "0025",
-  "generatedAt": "2026-11-02T13:32:00.017Z",
+  "generatedAt": "2026-11-03T12:49:10.493Z",
   "rawShape": "array",
   "events": [
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-11-02T04:45:45",
-      "IsApproximateTime": false,
-      "Height": 2.1844498730156525,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-11-02T00:00:00"
-    },
-    {
-      "EventType": "HighWater",
-      "DateTime": "2026-11-02T11:33:34",
-      "IsApproximateTime": false,
-      "Height": 4.214235636721121,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-11-02T00:00:00"
-    },
-    {
-      "EventType": "LowWater",
-      "DateTime": "2026-11-02T17:41:24",
-      "IsApproximateTime": false,
-      "Height": 2.123077275127066,
-      "IsApproximateHeight": false,
-      "Filtered": false,
-      "Date": "2026-11-02T00:00:00"
-    },
     {
       "EventType": "HighWater",
       "DateTime": "2026-11-03T00:35:17.717",
@@ -246,6 +219,33 @@
       "IsApproximateHeight": false,
       "Filtered": false,
       "Date": "2026-11-08T00:00:00"
+    },
+    {
+      "EventType": "HighWater",
+      "DateTime": "2026-11-09T05:53:37",
+      "IsApproximateTime": false,
+      "Height": 4.923089417148729,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-11-09T00:00:00"
+    },
+    {
+      "EventType": "LowWater",
+      "DateTime": "2026-11-09T11:43:48.85",
+      "IsApproximateTime": false,
+      "Height": 1.0937173795098487,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-11-09T00:00:00"
+    },
+    {
+      "EventType": "HighWater",
+      "DateTime": "2026-11-09T18:07:23",
+      "IsApproximateTime": false,
+      "Height": 4.88524644722168,
+      "IsApproximateHeight": false,
+      "Filtered": false,
+      "Date": "2026-11-09T00:00:00"
     }
   ]
 }
